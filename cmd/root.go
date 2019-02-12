@@ -16,11 +16,12 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/voteright/voteright/primaryapi"
 )
 
 var cfgFile string
@@ -28,16 +29,26 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "voteright",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "A verifiable voting suite, primary server",
+	Long: `This is the primary voting server that serves the voting booth, and sends votes to a verification cluster.
+	
+	This should be run by a trusted party, and configured in config.json as such:
+	{Fill this in}
+	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		cfg := primaryapi.Config{}
+		err := viper.Unmarshal(&cfg)
+
+		if err != nil {
+			fmt.Println("Failed to unmarshal configuration!")
+			return
+		}
+
+		api := primaryapi.New(&cfg)
+		api.Serve()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -51,11 +62,10 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.voteright.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./voteright.json)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -68,22 +78,21 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
+		dir, err := os.Getwd()
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
-
-		// Search config in home directory with name ".voteright" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".voteright")
+		viper.AddConfigPath(dir)
+		viper.SetConfigType("json")
+		viper.SetConfigName("voteright")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
-
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	} else {
+		fmt.Print(err)
 	}
+
 }
