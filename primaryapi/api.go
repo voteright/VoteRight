@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/voteright/voteright/config"
+	"github.com/voteright/voteright/election"
+
 	"github.com/go-chi/chi"
 	"github.com/wtg/shuttletracker/log"
 )
@@ -11,6 +14,7 @@ import (
 // PrimaryAPI represents the configuration for the primary vote server api
 type PrimaryAPI struct {
 	ListenURL string
+	Election  *election.Election
 	r         chi.Router
 }
 
@@ -28,11 +32,12 @@ func (api *PrimaryAPI) Serve() {
 }
 
 // New returns a new PrimaryAPI object
-func New(cfg *Config) *PrimaryAPI {
+func New(cfg *config.Config, e *election.Election) *PrimaryAPI {
 	r := chi.NewRouter()
 
 	api := &PrimaryAPI{
 		ListenURL: cfg.ListenURL,
+		Election:  e,
 		r:         r,
 	}
 
