@@ -1,3 +1,4 @@
 {
-    "ListenURL": "0.0.0.0:8080"
+    "ListenURL": "0.0.0.0:8080",
+    "DatabaseFile": "voteright.db"
 }

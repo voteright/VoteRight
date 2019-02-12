@@ -21,6 +21,9 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/voteright/voteright/config"
+	"github.com/voteright/voteright/database"
+	"github.com/voteright/voteright/election"
 	"github.com/voteright/voteright/primaryapi"
 )
 
@@ -33,20 +36,27 @@ var rootCmd = &cobra.Command{
 	Long: `This is the primary voting server that serves the voting booth, and sends votes to a verification cluster.
 	
 	This should be run by a trusted party, and configured in config.json as such:
-	{Fill this in}
-	`,
+	{Fill this in}`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg := primaryapi.Config{}
+		cfg := config.Config{}
 		err := viper.Unmarshal(&cfg)
 
 		if err != nil {
 			fmt.Println("Failed to unmarshal configuration!")
 			return
 		}
+		d, err := database.New(&cfg)
+		if err != nil {
+			return
+		}
+		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS voter (id INTEGER PRIMARY KEY, name VARCHAR(255))")
+		d.ExecStatement("INSERT INTO voter values (1, \"TEST\")")
 
-		api := primaryapi.New(&cfg)
+		e := election.New(d)
+
+		api := primaryapi.New(&cfg, e)
 		api.Serve()
 	},
 }
