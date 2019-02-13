@@ -26,7 +26,7 @@ func (api *PrimaryAPI) IndexHandler(w http.ResponseWriter, r *http.Request) {
 func (api *PrimaryAPI) Serve() {
 	fmt.Printf("Serving on: %s \n", api.ListenURL)
 	if err := http.ListenAndServe(api.ListenURL, api.r); err != nil {
-		fmt.println("Unable to serve.")
+		fmt.Println("Unable to serve.")
 	}
 }
 
