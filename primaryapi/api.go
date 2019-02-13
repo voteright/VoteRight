@@ -8,7 +8,6 @@ import (
 	"github.com/voteright/voteright/election"
 
 	"github.com/go-chi/chi"
-	"github.com/wtg/shuttletracker/log"
 )
 
 // PrimaryAPI represents the configuration for the primary vote server api
