@@ -8,7 +8,6 @@ import (
 	"github.com/voteright/voteright/election"
 
 	"github.com/go-chi/chi"
-	"github.com/wtg/shuttletracker/log"
 )
 
 // PrimaryAPI represents the configuration for the primary vote server api
@@ -27,7 +26,7 @@ func (api *PrimaryAPI) IndexHandler(w http.ResponseWriter, r *http.Request) {
 func (api *PrimaryAPI) Serve() {
 	fmt.Printf("Serving on: %s \n", api.ListenURL)
 	if err := http.ListenAndServe(api.ListenURL, api.r); err != nil {
-		log.WithError(err).Error("Unable to serve.")
+		fmt.Println("Unable to serve.")
 	}
 }
 
