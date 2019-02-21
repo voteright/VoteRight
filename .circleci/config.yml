@@ -23,7 +23,10 @@ jobs:
             MYENVVAR: todo
           command: |
             go test
-
+      - run:
+          name: Build
+          command: |
+            go build .
       - save_cache: # Store cache in the /go/pkg directory
           key: v1-pkg-cache
           paths:
