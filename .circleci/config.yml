@@ -4,11 +4,7 @@ jobs:
     docker: # run the steps with Docker
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
       - image: circleci/golang:1.11 #
-      # CircleCI PostgreSQL images available at: https://hub.docker.com/r/circleci/postgres/
-      - image: circleci/postgres:9.6-alpine
-        environment: # environment variables for primary container
-          POSTGRES_USER: circleci-demo-go
-          POSTGRES_DB: circle_test
+
     # directory where steps are run. Path must conform to the Go Workspace requirements
     working_directory: /go/src/github.com/voteright/voteright
 
