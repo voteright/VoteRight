@@ -1,12 +1,17 @@
 <html>
 <head>
     <title>Voting booth</title>
-    <link rel="stylesheet" type="text/css" href="/assets/main.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/main.css">
 </head>
 <body>
-    This is the voting booth
-    
-    VOTE: <input/>
-    <button>Send</button>
+<FORM action="/" method="post">
+    <P>
+        First name: <INPUT type="text" name="firstName">&nbsp;&nbsp;&nbsp;&nbsp;Last name: <INPUT type="text" name="lastName"><BR>
+        RIN: <INPUT type="text" name="rin"><BR>
+        <INPUT type="radio" name="candidate" value="Candidate1"> Candidate 1<BR>
+        <INPUT type="radio" name="candidate" value="Candidate2"> Candidate 2<BR>
+        <INPUT type="submit" value="Send"> <INPUT type="reset">
+    </P>
+</FORM>
 </body>
 </html>
