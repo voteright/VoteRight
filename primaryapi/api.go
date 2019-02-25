@@ -41,6 +41,8 @@ func (api *PrimaryAPI) PostHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Your name: %s %s\n", firstName, lastName)
 	fmt.Fprintf(w, "Your RIN: %d\n", rinInt)
 	fmt.Fprintf(w, "You voted for: %s\n", candidateName)
+
+	fmt.Println("Your vote's hash: %s\n", election.HashVote(rinInt, candidateName))
 }
 
 // Serve begins the server
