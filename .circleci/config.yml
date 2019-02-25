@@ -1,0 +1,33 @@
+version: 2 # use CircleCI 2.0
+jobs: 
+  build: 
+    docker: # run the steps with Docker
+      # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
+      - image: circleci/golang:1.11 #
+
+    # directory where steps are run. Path must conform to the Go Workspace requirements
+    working_directory: /go/src/github.com/voteright/voteright
+
+    steps:
+      - checkout 
+
+      - restore_cache: # restores saved cache if no changes are detected since last run
+      # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          keys:
+            - v1-pkg-cache
+
+      - run: go get .
+      - run:
+          name: Run unit tests
+          environment: # environment variables for the database url and path to migration files
+            MYENVVAR: todo
+          command: |
+            go test
+      - run:
+          name: Build
+          command: |
+            go build .
+      - save_cache: # Store cache in the /go/pkg directory
+          key: v1-pkg-cache
+          paths:
+            - "/go/pkg"
