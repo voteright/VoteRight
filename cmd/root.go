@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/voteright/voteright/config"
+	"github.com/voteright/voteright/database"
 	"github.com/voteright/voteright/election"
 	"github.com/voteright/voteright/primaryapi"
 )
@@ -42,12 +43,16 @@ var rootCmd = &cobra.Command{
 		cfg := config.Config{}
 		err := viper.Unmarshal(&cfg)
 
+		d, err := database.New(&cfg)
+		if err != nil {
+			return
+		}
 		if err != nil {
 			fmt.Println("Failed to unmarshal configuration!")
 			return
 		}
 
-		e := election.New()
+		e := election.New(d)
 
 		api := primaryapi.New(&cfg, e)
 		api.Serve()

@@ -15,7 +15,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/voteright/voteright/config"
 	"github.com/voteright/voteright/database"
@@ -24,12 +26,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-// initDatabaseCmd represents the initDatabase command
-var initDatabaseCmd = &cobra.Command{
-	Use:   "initDatabase",
-	Short: "Initialize the database for use with the voteright server",
-
+// exportdbCmd represents the exportdb command
+var exportdbCmd = &cobra.Command{
+	Use: "exportdb",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) != 1 {
+			fmt.Println("Invalid number of arguments for export (Requires filename)")
+			return
+		}
+
+		fmt.Printf("Exporting database to %s\n", args[0])
+
 		cfg := config.Config{}
 		err := viper.Unmarshal(&cfg)
 
@@ -39,33 +46,50 @@ var initDatabaseCmd = &cobra.Command{
 		}
 		d, err := database.New(&cfg)
 		if err != nil {
+			fmt.Println(err.Error())
 			return
 		}
-		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS voters (id INTEGER PRIMARY KEY, name VARCHAR(255), cohort INTEGER)")
+
+		voters, err := d.GetAllCohorts()
 		if err != nil {
 			fmt.Println(err.Error())
+
+			return
 		}
-		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS votes (hash INTEGER PRIMARY KEY, candidateid INTEGER)")
+		_ = voters
+		dump := database.Dump{}
+		dump.Voters, err = d.GetAllVoters()
 		if err != nil {
-			fmt.Println(err.Error())
+			fmt.Println("Error Exporting Voters")
+			return
 		}
-		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS cohorts (id INTEGER PRIMARY KEY, name VARCHAR(255))")
+		dump.Candidates, err = d.GetAllCandidates()
 		if err != nil {
-			fmt.Println(err.Error())
+			fmt.Println("Error Exporting Candidates")
+			return
 		}
-		// For the purposes of this class, for now, these values will be hardcoded, eventually we should allow configuration
-		_, err = d.ExecStatement("INSERT INTO cohorts VALUES (0,'2019'),(1,'2020'), (2,'2021'), (3,'2022')")
+		dump.Cohorts, err = d.GetAllCohorts()
 		if err != nil {
-			fmt.Println(err.Error())
+			fmt.Println("Error Exporting Cohorts")
+			return
 		}
-		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS candidates (id INTEGER PRIMARY KEY, name VARCHAR(255), cohort INTEGER, FOREIGN KEY (cohort) REFERENCES cohorts(id))")
+		dump.Votes, err = d.GetAllVotes()
 		if err != nil {
-			fmt.Println(err.Error())
+			fmt.Println("Error Exporting Votes")
+			return
 		}
 
+		json, _ := json.Marshal(dump)
+		err = ioutil.WriteFile(args[0], []byte(json), 0644)
+		if err != nil {
+			fmt.Println("Error writing to file")
+		} else {
+			fmt.Println("Done")
+		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(initDatabaseCmd)
+	rootCmd.AddCommand(exportdbCmd)
+
 }
