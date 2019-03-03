@@ -22,7 +22,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/voteright/voteright/config"
-	"github.com/voteright/voteright/database"
 	"github.com/voteright/voteright/election"
 	"github.com/voteright/voteright/primaryapi"
 )
@@ -47,14 +46,8 @@ var rootCmd = &cobra.Command{
 			fmt.Println("Failed to unmarshal configuration!")
 			return
 		}
-		d, err := database.New(&cfg)
-		if err != nil {
-			return
-		}
-		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS voter (id INTEGER PRIMARY KEY, name VARCHAR(255))")
-		d.ExecStatement("INSERT INTO voter values (1, \"TEST\")")
 
-		e := election.New(d)
+		e := election.New()
 
 		api := primaryapi.New(&cfg, e)
 		api.Serve()

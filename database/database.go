@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/voteright/voteright/config"
+	"github.com/voteright/voteright/models"
 )
 
 // Database represents a connection to the database
@@ -41,5 +42,10 @@ func (d *Database) ExecStatement(statement string) (sql.Result, error) {
 	}
 
 	return res, nil
+
+}
+
+// StoreVoter stores a voter in the database
+func (d *Database) StoreVoter(voter models.Voter) {
 
 }
