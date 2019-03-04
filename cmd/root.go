@@ -43,16 +43,14 @@ var rootCmd = &cobra.Command{
 		cfg := config.Config{}
 		err := viper.Unmarshal(&cfg)
 
-		if err != nil {
-			fmt.Println("Failed to unmarshal configuration!")
-			return
-		}
 		d, err := database.New(&cfg)
 		if err != nil {
 			return
 		}
-		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS voter (id INTEGER PRIMARY KEY, name VARCHAR(255))")
-		d.ExecStatement("INSERT INTO voter values (1, \"TEST\")")
+		if err != nil {
+			fmt.Println("Failed to unmarshal configuration!")
+			return
+		}
 
 		e := election.New(d)
 
