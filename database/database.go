@@ -73,7 +73,7 @@ func (d *Database) StoreVoters(voters []models.Voter) error {
 		return err
 	}
 	for _, voter := range voters {
-		st, err := tx.Prepare("INSERT INTO voters VALUE (?,?,?)")
+		st, err := tx.Prepare("INSERT INTO voters VALUES (?,?,?)")
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -90,6 +90,99 @@ func (d *Database) StoreVoters(voters []models.Voter) error {
 	}
 	return nil
 
+}
+
+// StoreCohort stores a cohort in the database
+func (d *Database) StoreCohort(cohort models.Cohort) error {
+	st, err := d.db.Prepare("INSERT INTO cohorts VALUES (?,?)")
+	if err != nil {
+		return err
+	}
+	_, err = st.Exec(cohort.ID, cohort.Name)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// StoreCohorts stores cohorts in the database
+func (d *Database) StoreCohorts(cohorts []models.Cohort) error {
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+	for _, cohort := range cohorts {
+		st, err := tx.Prepare("INSERT INTO cohorts VALUES (?,?)")
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		_, err = st.Exec(cohort.ID, cohort.Name)
+
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+// StoreCandidate stores a candidate in the database
+func (d *Database) StoreCandidate(candidate models.Candidate) error {
+	st, err := d.db.Prepare("INSERT INTO candidates VALUES (?,?,?)")
+	if err != nil {
+		return err
+	}
+	_, err = st.Exec(candidate.ID, candidate.Name, candidate.Cohort)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// StoreCandidates stores candidates in the database
+func (d *Database) StoreCandidates(candidates []models.Candidate) error {
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+	for _, candidate := range candidates {
+		st, err := d.db.Prepare("INSERT INTO candidates VALUES (?,?,?)")
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		_, err = st.Exec(candidate.ID, candidate.Name, candidate.Cohort)
+
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+// StoreVote stores a vote in the database
+func (d *Database) StoreVote(vote models.Vote) error {
+	st, err := d.db.Prepare("INSERT INTO votes VALUES (?,?)")
+	if err != nil {
+		return err
+	}
+	_, err = st.Exec(vote.Hash, vote.Candidate)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetAllVoters returns all voters in the database

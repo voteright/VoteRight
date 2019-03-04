@@ -27,14 +27,8 @@ import (
 
 // importdbCmd represents the importdb command
 var importdbCmd = &cobra.Command{
-	Use:   "importdb",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use: "importdb [filename]",
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
 			fmt.Println("Invalid number of arguments for import (Requires filename)")
@@ -70,6 +64,38 @@ to quickly create a Cobra application.`,
 			}
 		}
 		fmt.Println(dump)
+
+		err = d.StoreCohorts(dump.Cohorts)
+		if err != nil {
+			fmt.Println("Error importing cohorts:", err.Error())
+			fmt.Println("Was the database empty? Continuing")
+		}
+
+		err = d.StoreCandidates(dump.Candidates)
+		if err != nil {
+			fmt.Println("Error importing candidates:", err.Error())
+			fmt.Println("Was the database empty? Continuing")
+
+		}
+
+		err = d.StoreVoters(dump.Voters)
+		if err != nil {
+			fmt.Println("Error importing voters:", err.Error())
+			fmt.Println("Was the database empty? Continuing")
+
+		}
+
+		for _, vote := range dump.Votes {
+			err = d.StoreVote(vote)
+			if err != nil {
+				fmt.Println("Error importing votes:", err.Error())
+				fmt.Println("Was the database empty? Continuing")
+
+			}
+
+		}
+
+		fmt.Println("Done")
 
 	},
 }

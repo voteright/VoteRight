@@ -53,11 +53,6 @@ var initDatabaseCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		// For the purposes of this class, for now, these values will be hardcoded, eventually we should allow configuration
-		_, err = d.ExecStatement("INSERT INTO cohorts VALUES (0,'2019'),(1,'2020'), (2,'2021'), (3,'2022')")
-		if err != nil {
-			fmt.Println(err.Error())
-		}
 		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS candidates (id INTEGER PRIMARY KEY, name VARCHAR(255), cohort INTEGER, FOREIGN KEY (cohort) REFERENCES cohorts(id))")
 		if err != nil {
 			fmt.Println(err.Error())
