@@ -4,6 +4,7 @@ package models
 type Vote struct {
 	Hash      string
 	Candidate int
+	StudentID int
 }
 
 // calcluate if it does not exist some hash of the vote, must be repeatable
