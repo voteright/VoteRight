@@ -54,7 +54,7 @@ var rootCmd = &cobra.Command{
 
 		e := election.New(d)
 
-		api := primaryapi.New(&cfg, e)
+		api := primaryapi.New(&cfg, e, d)
 		api.Serve()
 	},
 }

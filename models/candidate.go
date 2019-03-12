@@ -6,3 +6,9 @@ type Candidate struct {
 	Cohort int
 	ID     int
 }
+
+// CandidateVotes returns the number of votes for a candidate
+type CandidateVotes struct {
+	Candidate Candidate
+	Votes     int
+}
