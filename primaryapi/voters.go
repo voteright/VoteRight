@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/voteright/voteright/models"
 )
@@ -69,5 +71,11 @@ func (api *PrimaryAPI) LoginVoter(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(403)
 		return
 	}
+	http.SetCookie(w, &http.Cookie{
+		Name:    "session_token",
+		Value:   strconv.Itoa(voter.StudentID),
+		Expires: time.Now().Add(5 * 60 * time.Second),
+	})
+	fmt.Println("voter logged in", voter.Name)
 	WriteJSON(w, voter)
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/voteright/voteright/database"
 
@@ -51,6 +52,23 @@ func WriteJSON(w http.ResponseWriter, data interface{}) error {
 	return nil
 }
 
+// Proof of concept to get session token
+func (api *PrimaryAPI) Whoamitestpage(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("session_token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(403)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	id, _ := strconv.Atoi(c.Value)
+	me, _ := api.Election.GetVoterByID(id)
+	WriteJSON(w, me)
+
+}
+
 // New returns a new PrimaryAPI object
 func New(cfg *config.Config, e *election.Election, d *database.Database) *PrimaryAPI {
 	r := chi.NewRouter()
@@ -70,6 +88,7 @@ func New(cfg *config.Config, e *election.Election, d *database.Database) *Primar
 		r.Get("/", api.GetAllVoters)
 		r.Post("/validate", api.ValidateVoter)
 		r.Post("/login", api.LoginVoter)
+		r.Get("/whoami", api.Whoamitestpage)
 	})
 	r.Route("/candidates", func(r chi.Router) {
 		r.Get("/", api.GetAllCandidates)

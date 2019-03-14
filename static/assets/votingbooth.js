@@ -23,7 +23,18 @@ document.getElementById("submitid").onclick = () =>{
     }).then((ret) => ret.json()).then((val) => {
         console.log(val)
         if (val != null){
-            alert("Welcome " + val.Name);
+            console.log("log in")
+            fetch("/voters/login", {
+                method: "POST", 
+                headers: {
+                    "Content-Type": "application/json",
+                    // "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: JSON.stringify(val)
+            }).then(() => {
+                window.location = "/voters/whoami"
+            })
+
         }else{
             helptext.innerText = "Invalid ID"
         }
