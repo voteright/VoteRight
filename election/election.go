@@ -18,6 +18,21 @@ func New(db *database.Database) *Election {
 	}
 }
 
+// GetVoterByID returns the voter with the given id
+func (e *Election) GetVoterByID(id int) (*models.Voter, error) {
+	voters, err := e.db.GetAllVoters()
+	var ret *models.Voter
+
+	for _, v := range voters {
+		if v.StudentID == id {
+			ret = &v
+			break
+		}
+	}
+	return ret, err
+
+}
+
 // GetAllCohorts returns all voters in the database
 func (e *Election) GetAllCohorts() ([]models.Cohort, error) {
 	return e.db.GetAllCohorts()

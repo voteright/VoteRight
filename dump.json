@@ -4,6 +4,11 @@
             "StudentID": 0,
             "Cohort": 1,
             "Name": "Joey Lyon"
+        },
+        {
+            "StudentID": 1,
+            "Cohort": 1,
+            "Name": "Michael Scott"
         }
     ],
     "Votes": [],
