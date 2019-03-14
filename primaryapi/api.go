@@ -65,8 +65,12 @@ func New(cfg *config.Config, e *election.Election, d *database.Database) *Primar
 	r.Get("/", api.IndexHandler)
 	// we're going to need to add mock auth here at some point
 	r.Get("/admin", api.AdminHandler)
-	r.Get("/voters", api.GetAllVoters)
 	r.Get("/cohorts", api.GetAllCohorts)
+	r.Route("/voters", func(r chi.Router) {
+		r.Get("/", api.GetAllVoters)
+		r.Post("/validate", api.ValidateVoter)
+		r.Post("/login", api.LoginVoter)
+	})
 	r.Route("/candidates", func(r chi.Router) {
 		r.Get("/", api.GetAllCandidates)
 		r.Get("/votes", api.GetAllCandidatesWithVotes)

@@ -1,6 +1,12 @@
 package primaryapi
 
-import "net/http"
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/voteright/voteright/models"
+)
 
 // GetAllVoters gets the list of the voters in the election
 func (api *PrimaryAPI) GetAllVoters(w http.ResponseWriter, r *http.Request) {
@@ -16,4 +22,52 @@ func (api *PrimaryAPI) GetAllVoters(w http.ResponseWriter, r *http.Request) {
 
 	WriteJSON(w, v)
 
+}
+
+type idpost struct {
+	ID int
+}
+
+func (api *PrimaryAPI) ValidateVoter(w http.ResponseWriter, r *http.Request) {
+	dec := json.NewDecoder(r.Body)
+	var s idpost
+	err := dec.Decode(&s)
+	if err != nil {
+		fmt.Println("Error", err.Error())
+		w.WriteHeader(400)
+		w.Write([]byte("Could not understand request body"))
+		return
+	}
+	voter, err := api.Election.GetVoterByID(s.ID)
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte("Failed to read the database"))
+		return
+	}
+
+	WriteJSON(w, voter)
+}
+
+// TODO: finish this
+func (api *PrimaryAPI) LoginVoter(w http.ResponseWriter, r *http.Request) {
+	dec := json.NewDecoder(r.Body)
+	var s models.Voter
+	err := dec.Decode(&s)
+	if err != nil {
+		fmt.Println("Error", err.Error())
+		w.WriteHeader(400)
+		w.Write([]byte("Could not understand request body"))
+		return
+	}
+	voter, err := api.Election.GetVoterByID(s.StudentID)
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte("Failed to read dbs"))
+		return
+	}
+	if *voter != s {
+		w.WriteHeader(403)
+		return
+	}
+	WriteJSON(w, voter)
 }

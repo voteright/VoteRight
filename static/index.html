@@ -1,12 +1,33 @@
 <html>
 <head>
-    <title>Voting booth</title>
-    <link rel="stylesheet" type="text/css" href="/assets/main.css"></link>
+    <title>Voting Booth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css" />
 </head>
 <body>
-    This is the voting booth
-    
-    VOTE: <input/>
-    <button>Send</button>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                VoteRight Voting Booth
+            </h1>
+            <h2 class="subtitle">
+                Enter your student id to begin
+            </h2>
+        </div>
+        <br>
+        <div class="field has-addons">
+            <div class="control">
+              <input type="number" id="idtextbox" class="input" type="text" placeholder="Student ID">
+              <p id="idhelp" class="help is-danger">This is a help text</p>
+            
+            </div>
+            <div class="control">
+              <a id="submitid" class="button is-info">
+                Submit
+              </a>
+              
+            </div>
+          </div>
+    </section>
+    <script src="/assets/votingbooth.js"></script>
 </body>
 </html>
