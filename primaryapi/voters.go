@@ -107,7 +107,7 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 		StudentID: me.StudentID,
 		Candidate: candidate.ID,
 	}
-	vote.hash()
+	vote.HashVote()
 
 	api.Election.CastVote(vote)
 }
