@@ -21,7 +21,6 @@ document.getElementById("submitid").onclick = () =>{
         },
         body: JSON.stringify({ID: x})
     }).then((ret) => ret.json()).then((val) => {
-        console.log(val)
         if (val != null){
             console.log("log in")
             fetch("/voters/login", {

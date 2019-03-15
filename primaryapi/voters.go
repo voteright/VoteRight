@@ -79,3 +79,26 @@ func (api *PrimaryAPI) LoginVoter(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("voter logged in", voter.Name)
 	WriteJSON(w, voter)
 }
+
+func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("session_token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(403)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	id, _ := strconv.Atoi(c.Value)
+	me, _ := api.Election.GetVoterByID(id)
+	_ = me
+
+	vote := &models.Vote{
+		StudentID: me.StudentID,
+		Candidate: 0,
+	}
+	vote.Hash()
+
+	api.Election.CastVote(me)
+}

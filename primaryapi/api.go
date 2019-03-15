@@ -27,6 +27,11 @@ func (api *PrimaryAPI) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/index.html")
 }
 
+// VoteBoothHandler serves the main vote page
+func (api *PrimaryAPI) VoteBoothHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "static/vote.html")
+}
+
 // AdminHandler serves the main Admin page
 func (api *PrimaryAPI) AdminHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/admin.html")
@@ -83,12 +88,17 @@ func New(cfg *config.Config, e *election.Election, d *database.Database) *Primar
 	r.Get("/", api.IndexHandler)
 	// we're going to need to add mock auth here at some point
 	r.Get("/admin", api.AdminHandler)
+	r.Get("/votingbooth", api.VoteBoothHandler)
 	r.Get("/cohorts", api.GetAllCohorts)
 	r.Route("/voters", func(r chi.Router) {
 		r.Get("/", api.GetAllVoters)
 		r.Post("/validate", api.ValidateVoter)
 		r.Post("/login", api.LoginVoter)
 		r.Get("/whoami", api.Whoamitestpage)
+	})
+	r.Route("/vote", func(r chi.Router) {
+		r.Post("/", api.CastVote)
+
 	})
 	r.Route("/candidates", func(r chi.Router) {
 		r.Get("/", api.GetAllCandidates)
