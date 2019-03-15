@@ -55,6 +55,7 @@ func (api *PrimaryAPI) LoginVoter(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var s models.Voter
 	err := dec.Decode(&s)
+
 	if err != nil {
 		fmt.Println("Error", err.Error())
 		w.WriteHeader(400)
@@ -81,6 +82,14 @@ func (api *PrimaryAPI) LoginVoter(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
+	dec := json.NewDecoder(r.Body)
+	var s idpost
+	err := dec.Decode(&s)
+	if err != nil{
+
+	}
+	candidate,err := api.Election.GetCandidateByID(s.ID)
+
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -96,9 +105,9 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 
 	vote := &models.Vote{
 		StudentID: me.StudentID,
-		Candidate: 0,
+		Candidate: candidate.ID,
 	}
-	vote.Hash()
+	vote.hash()
 
-	api.Election.CastVote(me)
+	api.Election.CastVote(vote)
 }
