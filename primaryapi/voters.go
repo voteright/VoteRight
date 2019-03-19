@@ -85,10 +85,10 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var s idpost
 	err := dec.Decode(&s)
-	if err != nil{
+	if err != nil {
 
 	}
-	candidate,err := api.Election.GetCandidateByID(s.ID)
+	candidate, err := api.Election.GetCandidateByID(s.ID)
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
@@ -107,7 +107,8 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 		StudentID: me.StudentID,
 		Candidate: candidate.ID,
 	}
-	vote.HashVote()
+	_ = vote
+	// vote.HashVote()
 
-	api.Election.CastVote(vote)
+	// api.Election.CastVote(vote)
 }

@@ -18,18 +18,19 @@ func New(db *database.Database) *Election {
 	}
 }
 
-func (e *Election) GetCandidateByID(id int) (*models.Candidate,error){
-	candidates,err = e.db.GetAllCandidates()
+func (e *Election) GetCandidateByID(id int) (*models.Candidate, error) {
+	candidates, err := e.db.GetAllCandidates()
 	var ret *models.Candidate
-	for _,c := range candidates{
-		if c.ID == id{
+	for _, c := range candidates {
+		if c.ID == id {
 			ret = &c
 			break
 		}
 	}
-	return ret,err
+	return ret, err
 
 }
+
 // GetVoterByID returns the voter with the given id
 func (e *Election) GetVoterByID(id int) (*models.Voter, error) {
 	voters, err := e.db.GetAllVoters()
