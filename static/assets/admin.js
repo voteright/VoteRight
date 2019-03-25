@@ -2,13 +2,13 @@
 window.voteright = {};
 
 window.voteright.populateCandidates = () => {
-    fetch("/candidates").then((ret) => ret.json()).then((candidates) => {
+    fetch("/candidates/votes").then((ret) => ret.json()).then((candidates) => {
         let list = document.getElementById("candidate-list");
         list.innerHTML = "";
         for(let i = 0; i < candidates.length; i ++){
             console.log(candidates[i])
             let item = document.createElement("li")
-            item.innerText = "ID: " + String(candidates[i].ID) + " | Name: " + candidates[i].Name + " | Cohort: " + String(candidates[i].Cohort)
+            item.innerText = "ID: " + String(candidates[i].Candidate.ID) + " | Name: " + candidates[i].Candidate.Name + " | Cohort: " + String(candidates[i].Candidate.Cohort) + " | Votes: " + String(candidates[i].Votes)
             list.appendChild(item);
         }
     })

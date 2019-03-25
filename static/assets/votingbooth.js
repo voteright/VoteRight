@@ -22,16 +22,23 @@ document.getElementById("submitid").onclick = () =>{
         body: JSON.stringify({ID: x})
     }).then((ret) => ret.json()).then((val) => {
         if (val != null){
-            console.log("log in")
             fetch("/voters/login", {
                 method: "POST", 
                 headers: {
                     "Content-Type": "application/json",
                     // "Content-Type": "application/x-www-form-urlencoded",
                 },
+                credentials: 'include',
                 body: JSON.stringify(val)
-            }).then(() => {
-                window.location = "/voters/whoami"
+            }).then((data) => {
+                return data.text()
+            }).then((val) => {
+                if (val == "voted"){
+                    alert("Already voted")
+                }else{
+                    window.location = "/votingbooth"
+                    
+                }
             })
 
         }else{

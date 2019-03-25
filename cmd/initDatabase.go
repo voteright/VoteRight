@@ -57,6 +57,10 @@ var initDatabaseCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err.Error())
 		}
+		_, err = d.ExecStatement("CREATE TABLE IF NOT EXISTS voted (id INTEGER PRIMARY KEY)")
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 
 	},
 }

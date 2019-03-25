@@ -31,6 +31,10 @@ func (e *Election) GetCandidateByID(id int) (*models.Candidate, error) {
 
 }
 
+func (e *Election) HasVoted(voter models.Voter) (*bool, error) {
+	return e.db.HasVoted(voter)
+}
+
 // GetVoterByID returns the voter with the given id
 func (e *Election) GetVoterByID(id int) (*models.Voter, error) {
 	voters, err := e.db.GetAllVoters()

@@ -27,6 +27,11 @@ func (api *PrimaryAPI) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/index.html")
 }
 
+// ThanksHandler serves the main thanks page
+func (api *PrimaryAPI) ThanksHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "static/thanksforvoting.html")
+}
+
 // VoteBoothHandler serves the main vote page
 func (api *PrimaryAPI) VoteBoothHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/vote.html")
@@ -90,16 +95,15 @@ func New(cfg *config.Config, e *election.Election, d *database.Database) *Primar
 	r.Get("/admin", api.AdminHandler)
 	r.Get("/votingbooth", api.VoteBoothHandler)
 	r.Get("/cohorts", api.GetAllCohorts)
+	r.Get("/thanks", api.ThanksHandler)
 	r.Route("/voters", func(r chi.Router) {
 		r.Get("/", api.GetAllVoters)
 		r.Post("/validate", api.ValidateVoter)
 		r.Post("/login", api.LoginVoter)
 		r.Get("/whoami", api.Whoamitestpage)
+		r.Post("/vote", api.CastVote)
 	})
-	r.Route("/vote", func(r chi.Router) {
-		r.Post("/", api.CastVote)
 
-	})
 	r.Route("/candidates", func(r chi.Router) {
 		r.Get("/", api.GetAllCandidates)
 		r.Get("/votes", api.GetAllCandidatesWithVotes)

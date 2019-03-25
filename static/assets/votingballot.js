@@ -1,6 +1,7 @@
 window.voteright = {}
 
 window.onload = () => {
+    document.getElementById("voteFailed").hidden = true;
     fetch("/candidates").then((data) => data.json()).then((val) => {
         let candidateslist = document.getElementById("candidateslist")
         let candidateSelector = candidateslist.getElementsByClassName("candidateSelector")
@@ -15,9 +16,18 @@ window.onload = () => {
 
             let button = myCandidateBox.getElementsByClassName("submitbutton")[0]
             button.onclick = () => {
-                fetch("/vote", {
+                fetch("/voters/vote", {
                     method: "POST",
-                    body: JSON.stringify({ID: val[i].ID})
+                    body: JSON.stringify({ID: val[i].ID}),
+                    credentials: "include",
+                }).then((response) => {
+                    if (!response.ok) {
+                        document.getElementById("voteFailed").hidden = false;
+
+                    }else{
+                        window.location = "/thanks"
+
+                    }
                 })
             }
 

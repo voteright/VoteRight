@@ -62,16 +62,26 @@ func (api *PrimaryAPI) LoginVoter(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Could not understand request body"))
 		return
 	}
+	print("here")
 	voter, err := api.Election.GetVoterByID(s.StudentID)
 	if err != nil {
 		w.WriteHeader(500)
 		w.Write([]byte("Failed to read dbs"))
 		return
 	}
+
 	if *voter != s {
 		w.WriteHeader(403)
 		return
 	}
+	fmt.Println(voter)
+	ret, err := api.Election.HasVoted(*voter)
+	fmt.Println(*ret)
+	if *ret {
+		w.Write([]byte("voted"))
+		return
+	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "session_token",
 		Value:   strconv.Itoa(voter.StudentID),
@@ -108,7 +118,12 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 		Candidate: candidate.ID,
 	}
 	_ = vote
-	// vote.HashVote()
+	vote.HashVote(me)
+	fmt.Println(vote.Hash)
+	err = api.Election.CastVote(me, vote)
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte("Failed to cast vote"))
 
-	// api.Election.CastVote(vote)
+	}
 }
