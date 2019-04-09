@@ -18,6 +18,11 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/voteright/voteright/config"
+	"github.com/voteright/voteright/database"
+	"github.com/voteright/voteright/election"
+	"github.com/voteright/voteright/verificationapi"
 )
 
 // verifyCmd represents the verify command
@@ -31,20 +36,26 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("verify called")
+		cfg := config.Config{}
+		err := viper.Unmarshal(&cfg)
+
+		d, err := database.New(&cfg)
+		if err != nil {
+			return
+		}
+		if err != nil {
+			fmt.Println("Failed to unmarshal configuration!")
+			return
+		}
+
+		e := election.New(d)
+
+		api := verificationapi.New(&cfg, e, d)
+		api.Serve()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(verifyCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// verifyCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// verifyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

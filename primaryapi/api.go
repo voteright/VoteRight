@@ -16,10 +16,11 @@ import (
 
 // PrimaryAPI represents the configuration for the primary vote server api
 type PrimaryAPI struct {
-	ListenURL string
-	Election  *election.Election
-	Database  *database.Database
-	r         chi.Router
+	ListenURL          string
+	Election           *election.Election
+	Database           *database.Database
+	VerificationAPIKey string // Allow the applciation to authenticate with the verification api
+	r                  chi.Router
 }
 
 // IndexHandler serves the main vote page
