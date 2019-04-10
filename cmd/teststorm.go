@@ -16,18 +16,16 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"github.com/voteright/voteright/config"
 	"github.com/voteright/voteright/database"
-	"github.com/voteright/voteright/election"
-	"github.com/voteright/voteright/verificationapi"
+	"github.com/voteright/voteright/models"
 )
 
-// verifyCmd represents the verify command
-var verifyCmd = &cobra.Command{
-	Use:   "verify",
+// teststormCmd represents the teststorm command
+var teststormCmd = &cobra.Command{
+	Use:   "teststorm",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -36,26 +34,42 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg := config.Config{}
-		err := viper.Unmarshal(&cfg)
-
-		d, err := database.New(&cfg)
-		if err != nil {
-			return
+		fmt.Println("teststorm called")
+		x := database.StormDB{
+			File: "test.db",
 		}
-		if err != nil {
-			fmt.Println("Failed to unmarshal configuration!")
-			return
+		x.Connect()
+
+		var candidates []models.Cohort
+		for i := 1; i < 10; i++ {
+			candidates = append(candidates, models.Cohort{
+				Name: "bob" + strconv.Itoa(i),
+				ID:   i,
+			})
 		}
 
-		e := election.New(d)
+		err := x.StoreCohorts(candidates)
+		fmt.Println(err)
 
-		api := verificationapi.New(&cfg, e, d)
-		api.Serve()
+		var z []models.Cohort
+
+		e := x.DB.All(&z)
+		fmt.Println(e)
+		fmt.Println(z)
+		x.Close()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(verifyCmd)
+	rootCmd.AddCommand(teststormCmd)
 
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// teststormCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// teststormCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

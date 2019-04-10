@@ -44,11 +44,16 @@ var exportdbCmd = &cobra.Command{
 			fmt.Println("Failed to unmarshal configuration!")
 			return
 		}
-		d, err := database.New(&cfg)
-		if err != nil {
-			fmt.Println(err.Error())
-			return
+		// d, err := database.New(&cfg)
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// 	return
+		// }
+
+		d := database.StormDB{
+			File: cfg.DatabaseFile,
 		}
+		d.Connect()
 
 		voters, err := d.GetAllCohorts()
 		if err != nil {
@@ -74,6 +79,11 @@ var exportdbCmd = &cobra.Command{
 			return
 		}
 		dump.Votes, err = d.GetAllVotes()
+		if err != nil {
+			fmt.Println("Error Exporting Votes")
+			return
+		}
+		dump.Races, err = d.GetAllRaces()
 		if err != nil {
 			fmt.Println("Error Exporting Votes")
 			return

@@ -19,6 +19,7 @@ type Dump struct {
 	Votes      []models.Vote
 	Candidates []models.Candidate
 	Cohorts    []models.Cohort
+	Races      []models.Race
 }
 
 // New establishes the connection to the database and returns the driver

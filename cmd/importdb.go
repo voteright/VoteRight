@@ -44,11 +44,15 @@ var importdbCmd = &cobra.Command{
 			fmt.Println("Failed to unmarshal configuration!")
 			return
 		}
-		d, err := database.New(&cfg)
-		if err != nil {
-			fmt.Println(err.Error())
-			return
+		// d, err := database.New(&cfg)
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// 	return
+		// }
+		d := database.StormDB{
+			File: cfg.DatabaseFile,
 		}
+		d.Connect()
 		_ = d
 		dump := database.Dump{}
 		bytes, err := ioutil.ReadFile(args[0])
@@ -77,7 +81,7 @@ var importdbCmd = &cobra.Command{
 			fmt.Println("Was the database empty? Continuing")
 
 		}
-
+		// fmt.Printf("storing %d voters", len(dump.Voters))
 		err = d.StoreVoters(dump.Voters)
 		if err != nil {
 			fmt.Println("Error importing voters:", err.Error())
@@ -93,6 +97,14 @@ var importdbCmd = &cobra.Command{
 
 			}
 
+		}
+		for _, race := range dump.Races {
+			err = d.StoreRace(race)
+			if err != nil {
+				fmt.Println("Error importing candidates:", err.Error())
+				fmt.Println("Was the database empty? Continuing")
+
+			}
 		}
 
 		fmt.Println("Done")

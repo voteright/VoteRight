@@ -1,4 +1,4 @@
-package primaryapi
+package api
 
 import (
 	"encoding/json"
@@ -18,7 +18,7 @@ import (
 type PrimaryAPI struct {
 	ListenURL          string
 	Election           *election.Election
-	Database           *database.Database
+	Database           *database.StormDB
 	VerificationAPIKey string // Allow the applciation to authenticate with the verification api
 	r                  chi.Router
 }
@@ -81,7 +81,7 @@ func (api *PrimaryAPI) Whoamitestpage(w http.ResponseWriter, r *http.Request) {
 }
 
 // New returns a new PrimaryAPI object
-func New(cfg *config.Config, e *election.Election, d *database.Database) *PrimaryAPI {
+func New(cfg *config.Config, e *election.Election, d *database.StormDB) *PrimaryAPI {
 	r := chi.NewRouter()
 
 	api := &PrimaryAPI{
@@ -108,6 +108,10 @@ func New(cfg *config.Config, e *election.Election, d *database.Database) *Primar
 	r.Route("/candidates", func(r chi.Router) {
 		r.Get("/", api.GetAllCandidates)
 		r.Get("/votes", api.GetAllCandidatesWithVotes)
+	})
+
+	r.Route("/races", func(r chi.Router) {
+		r.Get("/", api.GetAllRaces)
 	})
 
 	r.Method("GET", "/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("static/assets/"))))

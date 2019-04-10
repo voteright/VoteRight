@@ -1,14 +1,19 @@
 {
     "Voters": [
         {
-            "StudentID": 0,
+            "StudentID": 1,
             "Cohort": 1,
             "Name": "Joey Lyon"
         },
         {
-            "StudentID": 1,
+            "StudentID": 2,
             "Cohort": 1,
             "Name": "Michael Scott"
+        },
+        {
+            "StudentID": 3,
+            "Cohort": 1,
+            "Name": "Grace Roller"
         }
     ],
     "Votes": [],
@@ -31,20 +36,41 @@
     ],
     "Cohorts": [
         {
-            "ID": 0,
+            "ID": 1,
             "Name": "2019"
         },
         {
-            "ID": 1,
+            "ID": 2,
             "Name": "2020"
         },
         {
-            "ID": 2,
+            "ID": 3,
             "Name": "2021"
         },
         {
-            "ID": 3,
+            "ID": 4,
             "Name": "2022"
+        }
+    ],
+    "Races": [
+        {
+            "ID": 1,
+            "Name": "President",
+            "Votes": [],
+            "Candidates": [
+                1,
+                2,
+                3
+            ]
+        },
+        {
+            "ID": 2,
+            "Name": "Vice President",
+            "Votes": [],
+            "Candidates": [
+                2,
+                3
+            ]
         }
     ]
 }

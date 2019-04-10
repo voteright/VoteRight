@@ -11,6 +11,7 @@ type Vote struct {
 	Hash      string
 	Candidate int
 	StudentID int
+	ID        int `storm:"id,increment"`
 }
 
 // HashVote calcluate if it does not exist some hash of the vote, must be repeatable

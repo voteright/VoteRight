@@ -1,4 +1,4 @@
-package primaryapi
+package api
 
 import "net/http"
 

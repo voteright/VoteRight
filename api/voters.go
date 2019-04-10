@@ -1,4 +1,4 @@
-package primaryapi
+package api
 
 import (
 	"encoding/json"
@@ -123,7 +123,7 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 	err = api.Election.CastVote(me, vote)
 	if err != nil {
 		w.WriteHeader(500)
-		w.Write([]byte("Failed to cast vote"))
+		w.Write([]byte(err.Error()))
 
 	}
 }

@@ -8,11 +8,11 @@ import (
 // Election represents entities required to run an election, will eventually contain
 // the database interaction, and potentially remote servers
 type Election struct {
-	db *database.Database
+	db *database.StormDB
 }
 
 // New returns a new election struct
-func New(db *database.Database) *Election {
+func New(db *database.StormDB) *Election {
 	return &Election{
 		db: db,
 	}
@@ -63,6 +63,34 @@ func (e *Election) GetAllVoters() ([]models.Voter, error) {
 // GetAllCandidates returns all candidates in the database
 func (e *Election) GetAllCandidates() ([]models.Candidate, error) {
 	return e.db.GetAllCandidates()
+}
+
+// GetAllRaces returns all races in the database
+func (e *Election) GetAllRaces() ([]models.RaceWithCandidates, error) {
+	candidates, err := e.db.GetAllCandidates()
+	if err != nil {
+		return nil, err
+	}
+	races, err := e.db.GetAllRaces()
+	if err != nil {
+		return nil, err
+	}
+	var ret []models.RaceWithCandidates
+	for _, race := range races {
+		r1 := models.RaceWithCandidates{
+			Name: race.Name,
+			ID:   race.ID,
+		}
+		for _, candidate := range candidates {
+			for _, id := range race.Candidates {
+				if id == candidate.ID {
+					r1.Candidates = append(r1.Candidates, candidate)
+				}
+			}
+		}
+		ret = append(ret, r1)
+	}
+	return ret, nil
 }
 
 // GetCandidateVoteCounts returns the candidates with their vote totals

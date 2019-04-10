@@ -1,6 +1,7 @@
 <html>
 <head>
     <title>Voting Booth</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css" />
 </head>
 <body>
@@ -13,7 +14,35 @@
                 Cast Votes for candidates
             </h2>
         </div>
-        <div id="voteFailed" class="notification is-danger">
+        <div id="app">
+            <br>
+            <div class="container">
+                <div v-for="race,id in races" class="box">
+                    <p class="title">
+                        {{race.Name}}
+                    </p>
+                    <div id="candidateslist" class="column">
+                            <div v-for="candidate in race.Candidates" class="notification candidateSelector" :class="{'is-danger': races[id].for == candidate.ID}">
+                                <div class="level">
+                                    <div class="level-left candidateName">
+                                        {{candidate.Name}}
+                                    </div>
+                                    <div class="level-right candidateVote">
+                                        <button :disabled="isDisabled(id)" @click="vote(race.ID, candidate.ID, id);" class="button is-info submitbutton">Vote</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <div style="display:flex;justify-content: flex-end;">
+                            <button v-if="isDisabled(id)" @click="races[id].for = -1; races[id].voted = false;" class="button">Reset</button>
+                        </div>
+                </div>
+                <div v-if="readyToSend()" style="display:flex;justify-content: flex-end;">
+                    <button @click="submit" class="button is-info">Submit</button>
+                </div>
+            </div>
+        </div>
+        <!-- <div id="voteFailed" class="notification is-danger">
             <p>Failed to cast vote</p>
         </div>
         <br>
@@ -32,7 +61,7 @@
                 </div>
             </div>
           </div>
-        </div>
+        </div> -->
        
     </section>
     <script src="/assets/votingballot.js"></script>
