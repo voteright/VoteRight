@@ -16,6 +16,10 @@
         </div>
         <div id="app">
             <br>
+            <div v-if="alreadyvoted" class="notification is-danger">
+                <p>You have already voted</p>
+            </div>
+            <br>
             <div class="container">
                 <div v-for="race,id in races" class="box">
                     <p class="title">
@@ -38,7 +42,7 @@
                         </div>
                 </div>
                 <div v-if="readyToSend()" style="display:flex;justify-content: flex-end;">
-                    <button @click="printBallot" class="button is-info">Submit</button>
+                    <button @click="printBallot(); submit()" class="button is-info">Submit</button>
                 </div>
             </div>
         </div>

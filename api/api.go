@@ -100,6 +100,7 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 	r.Route("/voters", func(r chi.Router) {
 		r.Get("/", api.GetAllVoters)
 		r.Post("/validate", api.ValidateVoter)
+		r.Post("/verifyself", api.VerifySelf)
 		r.Post("/login", api.LoginVoter)
 		r.Get("/whoami", api.Whoamitestpage)
 		r.Post("/vote", api.CastVote)

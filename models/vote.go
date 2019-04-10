@@ -18,6 +18,6 @@ type Vote struct {
 func (v *Vote) HashVote(voter *Voter) {
 	// TODO: implement hash
 	h := fnv.New32a()
-	h.Write([]byte(strconv.Itoa(voter.StudentID)))
+	h.Write([]byte(strconv.Itoa(voter.StudentID + v.Candidate)))
 	v.Hash = fmt.Sprint(h.Sum32())
 }

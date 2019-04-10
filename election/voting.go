@@ -14,7 +14,6 @@ func (e *Election) CastVote(voter *models.Voter, vote *models.Vote) error {
 		fmt.Println(err)
 		return err
 	}
-	err = e.db.SetVoted(*voter)
 
 	return err
 }

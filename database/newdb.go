@@ -151,15 +151,28 @@ func (s *StormDB) GetAllVoters() ([]models.Voter, error) {
 	return voters, err
 }
 
-// StoreRace stores voters in the database
+// StoreRace stores races in the database
 func (s *StormDB) StoreRace(race models.Race) error {
 	return s.DB.Save(&race)
 
 }
 
-// GetAllRaces returns all voters in the database
+// GetAllRaces returns all races in the database
 func (s *StormDB) GetAllRaces() ([]models.Race, error) {
 	var races []models.Race
+	err := s.DB.All(&races)
+	return races, err
+}
+
+// StorIntegrityViolation stores integrity violations in the database
+func (s *StormDB) StorIntegrityViolation(IntegrityViolation models.IntegrityViolation) error {
+	return s.DB.Save(&IntegrityViolation)
+
+}
+
+// GetAllIntegrityViolations returns all integriy violations in the database
+func (s *StormDB) GetAllIntegrityViolations() ([]models.IntegrityViolation, error) {
+	var races []models.IntegrityViolation
 	err := s.DB.All(&races)
 	return races, err
 }

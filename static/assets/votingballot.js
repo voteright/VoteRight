@@ -6,6 +6,7 @@ var app = new Vue({
       message: 'Hello Vue!',
       races: [],
       voted: [],
+      alreadyvoted: true,
     },
     mounted (){
         fetch("/races").then((retval) => retval.json()).then((ret) => {
@@ -45,13 +46,16 @@ var app = new Vue({
         submit(){
             val = []
             for(let i = 0; i < this.races.length; i ++){
-                val.push({"Race": this.races[i].ID, "Candidate": this.races[i].for});
+                val.push({"ID": this.races[i].for});
             }
-            fetch("/vote",{
+
+            fetch("/voters/vote",{
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify(val),
-            })
+            }).then((resp) => {
+                return resp.json()
+            }).then((val) => console.log(val))
         },
         printBallot(){
             w = window.open()
@@ -65,6 +69,7 @@ var app = new Vue({
             w.document.body.appendChild(x)
             w.print()
             w.close()
+            // window.location = "/thanks"
         }
     }
   })

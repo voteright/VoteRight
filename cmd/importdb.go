@@ -52,7 +52,10 @@ var importdbCmd = &cobra.Command{
 		d := database.StormDB{
 			File: cfg.DatabaseFile,
 		}
-		d.Connect()
+		err = d.Connect()
+		if err != nil {
+			fmt.Println("err", err.Error())
+		}
 		_ = d
 		dump := database.Dump{}
 		bytes, err := ioutil.ReadFile(args[0])
