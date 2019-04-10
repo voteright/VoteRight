@@ -21,6 +21,12 @@ var app = new Vue({
         vote(raceid, candidateid, raceidx){
             this.$set(this.races[raceidx], 'voted', true);
             this.$set(this.races[raceidx], 'for', candidateid);
+            for (let i = 0; i < this.races[raceidx].Candidates.length; i ++){
+                if(this.races[raceidx].Candidates[i].ID == candidateid){
+                    this.$set(this.races[raceidx], 'forname', this.races[raceidx].Candidates[i].Name);
+
+                }
+            }
 
             console.log("VOTE " + raceid, + " " + candidateid + " " + raceidx, " " + this.races[raceidx].voted);
         },
@@ -46,6 +52,19 @@ var app = new Vue({
                 credentials: "include",
                 body: JSON.stringify(val),
             })
+        },
+        printBallot(){
+            w = window.open()
+
+            let x = document.createElement('div')
+            x.innerHTML ="<p style='font-size: 20px;'>Ballot</p>" 
+            for (let i = 0; i < this.races.length; i ++){
+                x.innerHTML += "<strong>" + this.races[i].Name + ":</strong> " + this.races[i].forname + "<br>";
+            }
+            x.innerHTML += "<p>Signature: ____________________</p>";
+            w.document.body.appendChild(x)
+            w.print()
+            w.close()
         }
     }
   })
