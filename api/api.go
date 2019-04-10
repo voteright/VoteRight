@@ -63,6 +63,20 @@ func WriteJSON(w http.ResponseWriter, data interface{}) error {
 	return nil
 }
 
+// GetintegrityViolations gets the integrity violations that occured
+func (api *PrimaryAPI) GetintegrityViolations(w http.ResponseWriter, r *http.Request) {
+
+	v, err := api.Database.GetAllIntegrityViolations()
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	WriteJSON(w, v)
+
+}
+
 // Proof of concept to get session token
 func (api *PrimaryAPI) Whoamitestpage(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session_token")
@@ -113,6 +127,10 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 
 	r.Route("/races", func(r chi.Router) {
 		r.Get("/", api.GetAllRaces)
+	})
+
+	r.Route("/integrity", func(r chi.Router) {
+		r.Get("/", api.GetintegrityViolations)
 	})
 
 	r.Method("GET", "/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("static/assets/"))))

@@ -6,7 +6,7 @@ var app = new Vue({
       message: 'Hello Vue!',
       races: [],
       voted: [],
-      alreadyvoted: true,
+      alreadyvoted: false,
     },
     mounted (){
         fetch("/races").then((retval) => retval.json()).then((ret) => {
@@ -54,8 +54,12 @@ var app = new Vue({
                 credentials: "include",
                 body: JSON.stringify(val),
             }).then((resp) => {
-                return resp.json()
-            }).then((val) => console.log(val))
+                if (resp.status == 200 ){
+                    this.printBallot()
+                }else{
+                    this.alreadyvoted = true;
+                }
+            })
         },
         printBallot(){
             w = window.open()
@@ -69,7 +73,7 @@ var app = new Vue({
             w.document.body.appendChild(x)
             w.print()
             w.close()
-            // window.location = "/thanks"
+            window.location = "/thanks"
         }
     }
   })

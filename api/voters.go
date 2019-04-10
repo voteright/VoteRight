@@ -154,6 +154,10 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if *voted {
+		api.Database.StoreIntegrityViolation(models.IntegrityViolation{
+			Message: "Voter " + strconv.Itoa(me.StudentID) + " tried to vote twice",
+			Time:    time.Now(),
+		})
 		w.WriteHeader(400)
 		w.Write([]byte("This voter has alredy voted"))
 		return

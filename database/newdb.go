@@ -165,7 +165,7 @@ func (s *StormDB) GetAllRaces() ([]models.Race, error) {
 }
 
 // StorIntegrityViolation stores integrity violations in the database
-func (s *StormDB) StorIntegrityViolation(IntegrityViolation models.IntegrityViolation) error {
+func (s *StormDB) StoreIntegrityViolation(IntegrityViolation models.IntegrityViolation) error {
 	return s.DB.Save(&IntegrityViolation)
 
 }
