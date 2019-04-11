@@ -16,7 +16,6 @@ type Vote struct {
 
 // HashVote calcluate if it does not exist some hash of the vote, must be repeatable
 func (v *Vote) HashVote(voter *Voter) {
-	// TODO: implement hash
 	h := fnv.New32a()
 	h.Write([]byte(strconv.Itoa(voter.StudentID + v.Candidate)))
 	v.Hash = fmt.Sprint(h.Sum32())

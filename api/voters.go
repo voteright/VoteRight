@@ -26,13 +26,13 @@ func (api *PrimaryAPI) GetAllVoters(w http.ResponseWriter, r *http.Request) {
 
 }
 
-type idpost struct {
+type IDPost struct {
 	ID int
 }
 
 func (api *PrimaryAPI) ValidateVoter(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	var s idpost
+	var s IDPost
 	err := dec.Decode(&s)
 	if err != nil {
 		fmt.Println("Error", err.Error())
@@ -42,6 +42,10 @@ func (api *PrimaryAPI) ValidateVoter(w http.ResponseWriter, r *http.Request) {
 	}
 	voter, err := api.Election.GetVoterByID(s.ID)
 	if err != nil {
+		api.Database.StoreIntegrityViolation(models.IntegrityViolation{
+			Message: "Invalid id attempted login",
+			Time:    time.Now(),
+		})
 		w.WriteHeader(500)
 		w.Write([]byte("Failed to read the database"))
 		return
@@ -129,18 +133,22 @@ func (api *PrimaryAPI) LoginVoter(w http.ResponseWriter, r *http.Request) {
 
 func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	var s []idpost
+	var s []IDPost
 	err := dec.Decode(&s)
 	if err != nil {
-
+		fmt.Println("error casting", err.Error())
 	}
+	fmt.Println("attempted to cast vote", s)
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(403)
+			fmt.Println("here")
 			return
 		}
+		fmt.Println("here2")
+
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

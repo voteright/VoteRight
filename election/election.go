@@ -8,13 +8,17 @@ import (
 // Election represents entities required to run an election, will eventually contain
 // the database interaction, and potentially remote servers
 type Election struct {
-	db *database.StormDB
+	db                  *database.StormDB
+	Verification        bool
+	VerificationServers []string
 }
 
 // New returns a new election struct
-func New(db *database.StormDB) *Election {
+func New(db *database.StormDB, Verification bool, VerificationServers []string) *Election {
 	return &Election{
-		db: db,
+		db:                  db,
+		Verification:        Verification,
+		VerificationServers: VerificationServers,
 	}
 }
 

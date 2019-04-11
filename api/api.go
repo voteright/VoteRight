@@ -77,7 +77,7 @@ func (api *PrimaryAPI) GetintegrityViolations(w http.ResponseWriter, r *http.Req
 
 }
 
-// Proof of concept to get session token
+// Whoamitestpage is a Proof of concept to get session token
 func (api *PrimaryAPI) Whoamitestpage(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session_token")
 	if err != nil {
@@ -108,9 +108,7 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 	r.Get("/", api.IndexHandler)
 	// we're going to need to add mock auth here at some point
 	r.Get("/admin", api.AdminHandler)
-	r.Get("/votingbooth", api.VoteBoothHandler)
-	r.Get("/cohorts", api.GetAllCohorts)
-	r.Get("/thanks", api.ThanksHandler)
+
 	r.Route("/voters", func(r chi.Router) {
 		r.Get("/", api.GetAllVoters)
 		r.Post("/validate", api.ValidateVoter)
@@ -120,6 +118,11 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 		r.Post("/vote", api.CastVote)
 	})
 
+	// if !api.Election.Verification {
+	r.Get("/votingbooth", api.VoteBoothHandler)
+	r.Get("/cohorts", api.GetAllCohorts)
+	r.Get("/thanks", api.ThanksHandler)
+
 	r.Route("/candidates", func(r chi.Router) {
 		r.Get("/", api.GetAllCandidates)
 		r.Get("/votes", api.GetAllCandidatesWithVotes)
@@ -128,6 +131,7 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 	r.Route("/races", func(r chi.Router) {
 		r.Get("/", api.GetAllRaces)
 	})
+	// }
 
 	r.Route("/integrity", func(r chi.Router) {
 		r.Get("/", api.GetintegrityViolations)

@@ -28,6 +28,7 @@ import (
 )
 
 var cfgFile string
+var portOverride string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -42,11 +43,15 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg := config.Config{}
 		err := viper.Unmarshal(&cfg)
-
+		fmt.Println("config", cfg.VerificationServers)
 		// d, err := database.New(&cfg)
 		// if err != nil {
 		// 	return
 		// }
+
+		if portOverride != "" {
+			cfg.ListenURL = "0.0.0.0:" + portOverride
+		}
 		d := database.StormDB{
 			File: cfg.DatabaseFile,
 		}
@@ -57,7 +62,7 @@ var rootCmd = &cobra.Command{
 			return
 		}
 
-		e := election.New(&d)
+		e := election.New(&d, false, cfg.VerificationServers)
 
 		api := api.New(&cfg, e, &d)
 		api.Serve()
@@ -82,7 +87,7 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().StringVarP(&portOverride, "port", "p", "8080", "override server port")
 }
 
 // initConfig reads in config file and ENV variables if set.
