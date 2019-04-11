@@ -7,6 +7,7 @@ var app = new Vue({
       races: [],
       voted: [],
       alreadyvoted: false,
+      randomID: -1,
     },
     mounted (){
         fetch("/races").then((retval) => retval.json()).then((ret) => {
@@ -59,6 +60,9 @@ var app = new Vue({
                 }else{
                     this.alreadyvoted = true;
                 }
+                return resp.json()
+            }).then((val) => {
+                this.randomID = val.RandomID;
             })
         },
         printBallot(){
@@ -73,7 +77,7 @@ var app = new Vue({
             w.document.body.appendChild(x)
             w.print()
             w.close()
-            window.location = "/thanks"
+            // window.location = "/thanks"
         }
     }
   })

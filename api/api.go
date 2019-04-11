@@ -135,6 +135,8 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 
 	r.Route("/integrity", func(r chi.Router) {
 		r.Get("/", api.GetintegrityViolations)
+		r.Post("/ballot", api.HandleVerificationPost)
+		r.Get("/ballot/{id}", api.GetBallot)
 	})
 
 	r.Method("GET", "/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("static/assets/"))))

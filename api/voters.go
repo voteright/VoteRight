@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -131,6 +132,7 @@ func (api *PrimaryAPI) LoginVoter(w http.ResponseWriter, r *http.Request) {
 	WriteJSON(w, voter)
 }
 
+// CastVote stores the votes in the database, creates the ballot, and sends the ballot to the verification servers
 func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var s []IDPost
@@ -138,20 +140,30 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error casting", err.Error())
 	}
-	fmt.Println("attempted to cast vote", s)
 
+	b := models.Ballot{}
+	b.GenerateRandomID()
+	// Decode the session cookie
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(403)
-			fmt.Println("here")
+			api.Database.StoreIntegrityViolation(models.IntegrityViolation{
+				Message: "Tried to cast vote without cookie",
+				Time:    time.Now(),
+			})
 			return
 		}
-		fmt.Println("here2")
+		api.Database.StoreIntegrityViolation(models.IntegrityViolation{
+			Message: "Voter tried with malformed request",
+			Time:    time.Now(),
+		})
 
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	// Ensure the current voter has not voted
 	id, _ := strconv.Atoi(c.Value)
 	me, _ := api.Election.GetVoterByID(id)
 	voted, err := api.Election.HasVoted(*me)
@@ -170,7 +182,7 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("This voter has alredy voted"))
 		return
 	}
-
+	// Save all votes for specific candidates in the database
 	for _, val := range s {
 		candidate, err := api.Election.GetCandidateByID(val.ID)
 
@@ -187,8 +199,21 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(500)
 			w.Write([]byte(err.Error()))
 
+			api.Database.StoreIntegrityViolation(models.IntegrityViolation{
+				Message: "[SEVERE]: Failed to cast one or more votes!",
+				Time:    time.Now(),
+			})
 		}
+		b.Candidates = append(b.Candidates, *candidate)
+	}
+
+	ballotBytes, _ := json.Marshal(b)
+	for _, s := range api.Election.VerificationServers {
+		http.Post(s+"/integrity/ballot", "application/json", bytes.NewReader(ballotBytes))
+		fmt.Println("posting to ", s)
+
 	}
 	err = api.Database.SetVoted(*me)
+	WriteJSON(w, b)
 
 }

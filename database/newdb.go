@@ -176,3 +176,13 @@ func (s *StormDB) GetAllIntegrityViolations() ([]models.IntegrityViolation, erro
 	err := s.DB.All(&races)
 	return races, err
 }
+
+func (s *StormDB) StoreBallot(Ballot models.Ballot) error {
+	return s.DB.Save(&Ballot)
+}
+
+func (s *StormDB) GetAllBallots() ([]models.Ballot, error) {
+	var ballots []models.Ballot
+	err := s.DB.All(&ballots)
+	return ballots, err
+}

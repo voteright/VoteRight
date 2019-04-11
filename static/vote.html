@@ -44,6 +44,13 @@
                 <div v-if="readyToSend()" style="display:flex;justify-content: flex-end;">
                     <button @click="submit()" class="button is-info">Submit</button>
                 </div>
+                <div v-if="randomID != -1">
+                    <p class="subtitle">Your reference id is: {{randomID}}, use it at a verification server to confirm your ballot</p>
+                    <a href="/thanks">
+                        <button class="button is-info">Continue</button>
+                    
+                    </a>
+                </div>
             </div>
         </div>
         <!-- <div id="voteFailed" class="notification is-danger">

@@ -36,6 +36,7 @@ document.getElementById("submitid").onclick = () =>{
                 if (val == "voted"){
                     alert("Already voted")
                 }else{
+                    // console.log(val)
                     window.location = "/votingbooth"
                     
                 }
