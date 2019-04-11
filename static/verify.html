@@ -1,0 +1,39 @@
+<html>
+<head>
+    <title>Voting Booth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                Verify
+            </h1>
+            <h2 class="subtitle">
+                Enter ballot id below
+            </h2>
+        </div>
+        <br>
+        <div id="app" class="container">
+          <div class="field has-addons">
+            <div class="control">
+              <input v-model="id" type="number" id="idtextbox" class="input" type="text" placeholder="Student ID">
+            
+            </div>
+            <div class="control">
+              <a @click="getData" id="submitid" class="button is-info">
+                Submit
+              </a>
+            </div>
+          </div>
+          <div v-if="id != {}">
+            <p class="subtitle">{{ballotData.RandomID}} Voted for: </p>
+            <p class="subtitle" v-for="candidate in ballotData.Candidates">{{candidate.Name}}</p>
+          </div>
+        </div>
+       
+    </section>
+    <script src="/assets/verify.js"></script>
+</body>
+</html>

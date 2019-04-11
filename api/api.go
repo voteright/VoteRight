@@ -28,6 +28,11 @@ func (api *PrimaryAPI) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/index.html")
 }
 
+// ShowBallotQueryPage serves the main vote page
+func (api *PrimaryAPI) ShowBallotQueryPage(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "static/verify.html")
+}
+
 // ThanksHandler serves the main thanks page
 func (api *PrimaryAPI) ThanksHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/thanksforvoting.html")
@@ -138,6 +143,7 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 		r.Post("/ballot", api.HandleVerificationPost)
 		r.Get("/totals", api.HandleVerificationCounts)
 		r.Get("/ballot/{id}", api.GetBallot)
+		r.Get("/ballot", api.ShowBallotQueryPage)
 	})
 
 	r.Method("GET", "/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("static/assets/"))))
