@@ -34,6 +34,33 @@ func (api *PrimaryAPI) HandleVerificationPost(w http.ResponseWriter, r *http.Req
 
 }
 
+// HandleVerificationCounts handles returning counts for verification
+func (api *PrimaryAPI) HandleVerificationCounts(w http.ResponseWriter, r *http.Request) {
+	x := []models.CandidateVotes{}
+	ballots, err := api.Database.GetAllBallots()
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+	for _, ballot := range ballots {
+		for _, candidate := range ballot.Candidates {
+			x = append(x, models.CandidateVotes{Candidate: candidate})
+		}
+	}
+	for _, ballot := range ballots {
+		for _, ballotCandidate := range ballot.Candidates {
+			for i := range x {
+				if ballotCandidate == x[i].Candidate {
+					x[i].Votes++
+				}
+			}
+		}
+
+	}
+	WriteJSON(w, x)
+
+}
+
 func (api *PrimaryAPI) GetBallot(w http.ResponseWriter, r *http.Request) {
 	idstr := chi.URLParam(r, "id")
 	idNum, err := strconv.Atoi(idstr)
