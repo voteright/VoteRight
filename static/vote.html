@@ -38,11 +38,11 @@
                             </div>
                         </div>
                     <div style="display:flex;justify-content: flex-end;">
-                            <button v-if="isDisabled(id)" @click="races[id].for = -1; races[id].voted = false;" class="button">Reset</button>
+                            <button v-if="isDisabled(id) && randomID == -1" @click="races[id].for = -1; races[id].voted = false;" class="button">Reset</button>
                         </div>
                 </div>
                 <div v-if="readyToSend()" style="display:flex;justify-content: flex-end;">
-                    <button @click="submit()" class="button is-info">Submit</button>
+                    <button v-if="randomID == -1" @click="submit()" class="button is-info">Submit</button>
                 </div>
                 <div v-if="randomID != -1">
                     <p class="subtitle">Your reference id is: {{randomID}}, use it at a verification server to confirm your ballot</p>

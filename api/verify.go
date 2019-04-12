@@ -42,11 +42,22 @@ func (api *PrimaryAPI) HandleVerificationCounts(w http.ResponseWriter, r *http.R
 		w.WriteHeader(500)
 		return
 	}
+	// Populate the array of candidate votes to count totals
 	for _, ballot := range ballots {
 		for _, candidate := range ballot.Candidates {
-			x = append(x, models.CandidateVotes{Candidate: candidate})
+			found := false
+			for _, c := range x {
+				if c.Candidate == candidate {
+					found = true
+					break
+				}
+			}
+			if !found {
+				x = append(x, models.CandidateVotes{Candidate: candidate})
+			}
 		}
 	}
+
 	for _, ballot := range ballots {
 		for _, ballotCandidate := range ballot.Candidates {
 			for i := range x {
@@ -57,6 +68,7 @@ func (api *PrimaryAPI) HandleVerificationCounts(w http.ResponseWriter, r *http.R
 		}
 
 	}
+
 	WriteJSON(w, x)
 
 }

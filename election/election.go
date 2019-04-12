@@ -1,6 +1,12 @@
 package election
 
 import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"sort"
+	"time"
+
 	"github.com/voteright/voteright/database"
 	"github.com/voteright/voteright/models"
 )
@@ -124,4 +130,66 @@ func (e *Election) GetCandidateVoteCounts() (*[]models.CandidateVotes, error) {
 	}
 
 	return &ret, nil
+}
+
+// GetCountsFromVerificationServers returns all of the counts from the verfication servers
+func (e *Election) GetCountsFromVerificationServers() ([][]models.CandidateVotes, error) {
+	var vsVals [][]models.CandidateVotes
+	for _, s := range e.VerificationServers {
+		r, err := http.Get(s + "/integrity/totals")
+
+		if err != nil {
+			e.db.StoreIntegrityViolation(models.IntegrityViolation{
+				Message: "[SEVERE]: Could not communicate with verification server " + s,
+				Time:    time.Now(),
+			})
+			return nil, err
+		}
+		var ret []models.CandidateVotes
+		dec := json.NewDecoder(r.Body)
+		err = dec.Decode(&ret)
+		if err != nil {
+			e.db.StoreIntegrityViolation(models.IntegrityViolation{
+				Message: "[SEVERE]: Could not decode response from verification server " + s,
+				Time:    time.Now(),
+			})
+			fmt.Println("failed to decode", err.Error())
+			return nil, err
+		}
+		vsVals = append(vsVals, ret)
+	}
+	fmt.Println(vsVals)
+	return vsVals, nil
+}
+
+// ByName is a type for sorting the slices of votes returned by verification servers
+type ByName []models.CandidateVotes
+
+func (a ByName) Len() int           { return len(a) }
+func (a ByName) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByName) Less(i, j int) bool { return a[i].Candidate.Name < a[j].Candidate.Name }
+
+// CheckVerificationCountsMatch checks if the veification counts from all servers match
+func (e *Election) CheckVerificationCountsMatch(votes [][]models.CandidateVotes) bool {
+
+	for _, i := range votes {
+		sort.Sort(ByName(i))
+		for _, k := range i {
+			for _, j := range votes {
+				sort.Sort(ByName(j))
+
+				// If one server has a candidate the others dont return false
+				if len(i) != len(j) {
+					return false
+				}
+				// Slices should be identical after sorting
+				for _, l := range j {
+					if l != k {
+						return false
+					}
+				}
+			}
+		}
+	}
+	return true
 }

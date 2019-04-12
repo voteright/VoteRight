@@ -33,6 +33,30 @@ func (api *PrimaryAPI) ShowBallotQueryPage(w http.ResponseWriter, r *http.Reques
 	http.ServeFile(w, r, "static/verify.html")
 }
 
+// Scrape scrapes verificaiton servers
+func (api *PrimaryAPI) Scrape(w http.ResponseWriter, r *http.Request) {
+	val, _ := api.Election.GetCountsFromVerificationServers()
+	fmt.Println(api.Election.CheckVerificationCountsMatch(val))
+	WriteJSON(w, val)
+}
+
+type verifcationMatch struct {
+	AllVerificaitonServersMatch bool
+}
+
+// VerificationMatching scrapes verificaiton servers and returns if the values match
+func (api *PrimaryAPI) VerificationMatching(w http.ResponseWriter, r *http.Request) {
+	val, err := api.Election.GetCountsFromVerificationServers()
+	if err != nil {
+		w.WriteHeader(500)
+	}
+	match := api.Election.CheckVerificationCountsMatch(val)
+	ret := verifcationMatch{
+		AllVerificaitonServersMatch: match,
+	}
+	WriteJSON(w, ret)
+}
+
 // ThanksHandler serves the main thanks page
 func (api *PrimaryAPI) ThanksHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "static/thanksforvoting.html")
@@ -144,6 +168,7 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 		r.Get("/totals", api.HandleVerificationCounts)
 		r.Get("/ballot/{id}", api.GetBallot)
 		r.Get("/ballot", api.ShowBallotQueryPage)
+		r.Get("/match", api.VerificationMatching)
 	})
 
 	r.Method("GET", "/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("static/assets/"))))
