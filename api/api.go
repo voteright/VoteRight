@@ -40,6 +40,12 @@ func (api *PrimaryAPI) Scrape(w http.ResponseWriter, r *http.Request) {
 	WriteJSON(w, val)
 }
 
+// GetVerificationServers gets all verificaiton servers
+func (api *PrimaryAPI) GetVerificationServers(w http.ResponseWriter, r *http.Request) {
+
+	WriteJSON(w, api.Election.VerificationServers)
+}
+
 type verifcationMatch struct {
 	AllVerificaitonServersMatch bool
 }
@@ -166,9 +172,11 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 		r.Get("/", api.GetintegrityViolations)
 		r.Post("/ballot", api.HandleVerificationPost)
 		r.Get("/totals", api.HandleVerificationCounts)
+		r.Get("/servers", api.GetVerificationServers)
 		r.Get("/ballot/{id}", api.GetBallot)
 		r.Get("/ballot", api.ShowBallotQueryPage)
 		r.Get("/match", api.VerificationMatching)
+		r.Get("/data", api.Scrape)
 	})
 
 	r.Method("GET", "/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("static/assets/"))))
