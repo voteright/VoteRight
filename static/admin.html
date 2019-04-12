@@ -48,7 +48,14 @@
                     <p>{{Date(violation.Time)}}: <span class="has-text-danger">{{violation.Message}} </span></p>
                 </li>
             </ul>
-
+            <p class="subtitle">
+                    Vote totals
+                </p>
+                <ul>
+                    <li v-for="violation in integrityViolations">
+                        <p>{{Date(violation.Time)}}: <span class="has-text-danger">{{violation.Message}} </span></p>
+                    </li>
+                </ul>
         </div>
     </section>
     <script src="/assets/admin.js"></script>
