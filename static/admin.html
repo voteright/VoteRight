@@ -35,7 +35,9 @@
                     All verification servers match
                 </div>
             <p>
-                {{verificationData}}
+                <p v-for="serverdata in verificationData">
+                    {{serverdata}}
+                </p>
             </p>
             <br>
             <p class="subtitle">
