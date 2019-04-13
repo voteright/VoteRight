@@ -99,37 +99,12 @@ func (s *StormDB) StoreVoter(voter models.Voter) error {
 	return s.DB.Save(&voter)
 }
 
-// Voted is a storm struct
-type Voted struct {
-	ID        int `storm:"id,increment"`
-	StudentID int
-}
-
-// SetVoted sets if a voter has voted
+// Setmodels. sets if a voter has voted
 func (s *StormDB) SetVoted(voter models.Voter) error {
-	val := Voted{
+	val := models.Voted{
 		StudentID: voter.StudentID,
 	}
 	return s.DB.Save(&val)
-}
-
-// HasVoted checks if a voter has voted
-func (s *StormDB) HasVoted(voter models.Voter) (*bool, error) {
-
-	var voted []Voted
-
-	s.DB.All(&voted)
-
-	var voters []models.Voter
-	s.DB.All(&voters)
-	retval := false
-	for _, val := range voted {
-		if voter.StudentID == val.StudentID {
-			retval = true
-			return &retval, nil
-		}
-	}
-	return &retval, nil
 }
 
 // StoreVoters stores voters in the database

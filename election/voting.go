@@ -10,8 +10,7 @@ type idpost struct {
 	ID int
 }
 
-// CastVote handles casting the vote and sending it to verification servers
-func (e *Election) CastVote(voter *models.Voter, vote *models.Vote) error {
+func (e *Election) castVote(voter *models.Voter, vote *models.Vote) error {
 	fmt.Println(voter, vote)
 	err := e.db.StoreVote(*vote)
 	if err != nil {
@@ -20,4 +19,16 @@ func (e *Election) CastVote(voter *models.Voter, vote *models.Vote) error {
 	}
 
 	return nil
+}
+
+// CastVotes handles casting the votes
+func (e *Election) CastVotes(voter *models.Voter, votes []models.Vote) error {
+	for _, v := range votes {
+		err := e.castVote(voter, &v)
+		if err != nil {
+			return err
+		}
+	}
+	return e.db.SetVoted(*voter)
+
 }

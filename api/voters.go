@@ -183,9 +183,18 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Save all votes for specific candidates in the database
+	votes := []models.Vote{}
 	for _, val := range s {
 		candidate, err := api.Election.GetCandidateByID(val.ID)
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write([]byte(err.Error()))
 
+			api.Database.StoreIntegrityViolation(models.IntegrityViolation{
+				Message: "[SEVERE]: Failed to pull candidate from database to cast a vote!",
+				Time:    time.Now(),
+			})
+		}
 		vote := &models.Vote{
 			StudentID: me.StudentID,
 			Candidate: candidate.ID,
@@ -193,27 +202,17 @@ func (api *PrimaryAPI) CastVote(w http.ResponseWriter, r *http.Request) {
 		_ = vote
 		vote.HashVote(me)
 		fmt.Println(vote.Hash)
-
-		err = api.Election.CastVote(me, vote)
-		if err != nil {
-			w.WriteHeader(500)
-			w.Write([]byte(err.Error()))
-
-			api.Database.StoreIntegrityViolation(models.IntegrityViolation{
-				Message: "[SEVERE]: Failed to cast one or more votes!",
-				Time:    time.Now(),
-			})
-		}
+		votes = append(votes, *vote)
 		b.Candidates = append(b.Candidates, *candidate)
 	}
 
+	err = api.Election.CastVotes(me, votes)
 	ballotBytes, _ := json.Marshal(b)
 	for _, s := range api.Election.VerificationServers {
 		http.Post(s+"/integrity/ballot", "application/json", bytes.NewReader(ballotBytes))
 		fmt.Println("posting to ", s)
 
 	}
-	err = api.Database.SetVoted(*me)
 	WriteJSON(w, b)
 
 }

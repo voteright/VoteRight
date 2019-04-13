@@ -41,8 +41,22 @@ func (e *Election) GetCandidateByID(id int) (*models.Candidate, error) {
 
 }
 
+// HasVoted returns true if the voter has voted, false if they have not, and nil, error if an error occurs
 func (e *Election) HasVoted(voter models.Voter) (*bool, error) {
-	return e.db.HasVoted(voter)
+	var voted []models.Voted
+
+	e.db.DB.All(&voted)
+
+	var voters []models.Voter
+	e.db.DB.All(&voters)
+	retval := false
+	for _, val := range voted {
+		if voter.StudentID == val.StudentID {
+			retval = true
+			return &retval, nil
+		}
+	}
+	return &retval, nil
 }
 
 // GetVoterByID returns the voter with the given id

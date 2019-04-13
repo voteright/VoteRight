@@ -14,6 +14,12 @@ type Vote struct {
 	ID        int `storm:"id,increment"`
 }
 
+// Voted is a storm struct for storing if a user has voted, it is here because it has not
+type Voted struct {
+	ID        int `storm:"id,increment"`
+	StudentID int
+}
+
 // HashVote calcluate if it does not exist some hash of the vote, must be repeatable
 func (v *Vote) HashVote(voter *Voter) {
 	h := fnv.New32a()
