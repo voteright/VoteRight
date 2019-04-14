@@ -4,6 +4,6 @@ COPY . .
 
 RUN ls
 
-RUN workdir
+RUN pwd
 
 RUN go run main.go
