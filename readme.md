@@ -25,7 +25,6 @@ In the event that less than two verification servers remain online, the election
 
 [Systems diagram](verificationdiagram.pdf)
 
-
 ## API and Routes
 
 **Primary voting server**

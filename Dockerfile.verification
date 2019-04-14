@@ -8,4 +8,4 @@ RUN go get
 
 RUN go build .
 
-CMD ["voteright"]
+CMD ["voteright", "verify", "--port={VERIFY_PORT}"]
