@@ -1,6 +1,6 @@
 FROM golang:latest
 
-WORKDIR /go/src/github.com/voteright
+WORKDIR /go/src/github.com/voteright/voteright
 
 COPY . .
 
