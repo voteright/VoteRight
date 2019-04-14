@@ -188,21 +188,23 @@ func (e *Election) CheckVerificationCountsMatch(votes [][]models.CandidateVotes)
 
 	for _, i := range votes {
 		sort.Sort(ByName(i))
-		for _, k := range i {
-			for _, j := range votes {
-				sort.Sort(ByName(j))
+		for _, j := range votes {
+			sort.Sort(ByName(j))
 
-				// If one server has a candidate the others dont return false
-				if len(i) != len(j) {
+			// If one server has a candidate the others dont return false
+			if len(i) != len(j) {
+				fmt.Println("Length mismatch")
+				return false
+			}
+			// Slices should be identical after sorting
+			for itr := range j {
+				if i[itr] != j[itr] {
 					return false
-				}
-				// Slices should be identical after sorting
-				for _, l := range j {
-					if l != k {
-						return false
-					}
+				} else {
+
 				}
 			}
+
 		}
 	}
 	return true

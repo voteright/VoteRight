@@ -55,6 +55,10 @@ func (api *PrimaryAPI) VerificationMatching(w http.ResponseWriter, r *http.Reque
 	val, err := api.Election.GetCountsFromVerificationServers()
 	if err != nil {
 		w.WriteHeader(500)
+		WriteJSON(w, &verifcationMatch{
+			AllVerificaitonServersMatch: false,
+		})
+		return
 	}
 	match := api.Election.CheckVerificationCountsMatch(val)
 	ret := verifcationMatch{

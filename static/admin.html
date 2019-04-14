@@ -48,12 +48,14 @@
                     <p>{{Date(violation.Time)}}: <span class="has-text-danger">{{violation.Message}} </span></p>
                 </li>
             </ul>
+            <br>
             <p class="subtitle">
                     Vote totals
                 </p>
                 <ul>
-                    <li v-for="violation in integrityViolations">
-                        <p>{{Date(violation.Time)}}: <span class="has-text-danger">{{violation.Message}} </span></p>
+                    <li v-for="total in voteTotals">
+                        <p><strong>{{total.Candidate.Name}}</strong></p>
+                        <p>{{total.Votes}}</p>
                     </li>
                 </ul>
         </div>

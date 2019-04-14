@@ -26,12 +26,14 @@ var app = new Vue({
         verificationServers: [],
         verificationData: [],
         integrityViolations: [],
+        voteTotals: [],
         serversMatch: false
     },
     mounted (){
         this.fetchVerificationServers();
         this.fetchIntegrityViolations();
         this.fetchIfServersMatch();
+        this.fetchVoteTotals();
         this.fetchServerData();
     },
     methods:{ 
@@ -53,6 +55,11 @@ var app = new Vue({
         fetchServerData(){
             fetch("/integrity/data").then((data) => data.json()).then((val) => {
                 this.verificationData = val;
+            })
+        },
+        fetchVoteTotals(){
+            fetch("/candidates/votes").then((data) => data.json()).then((val) => {
+                this.voteTotals = val;
             })
         }
     }
