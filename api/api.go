@@ -144,23 +144,30 @@ func New(cfg *config.Config, e *election.Election, d *database.StormDB) *Primary
 		r:         r,
 	}
 
-	r.Get("/", api.IndexHandler)
 	// we're going to need to add mock auth here at some point
 	r.Get("/admin", api.AdminHandler)
 
-	r.Route("/voters", func(r chi.Router) {
-		r.Get("/", api.GetAllVoters)
-		r.Post("/validate", api.ValidateVoter)
-		r.Post("/verifyself", api.VerifySelf)
-		r.Post("/login", api.LoginVoter)
-		r.Get("/whoami", api.Whoamitestpage)
-		r.Post("/vote", api.CastVote)
-	})
+	// These should not be shown on verification servers
+	if !cfg.Verification {
+		r.Get("/", api.IndexHandler)
+		r.Route("/voters", func(r chi.Router) {
+			r.Get("/", api.GetAllVoters)
+			r.Post("/validate", api.ValidateVoter)
+			r.Post("/verifyself", api.VerifySelf)
+			r.Post("/login", api.LoginVoter)
+			r.Get("/whoami", api.Whoamitestpage)
+			r.Post("/vote", api.CastVote)
+		})
+		r.Get("/votingbooth", api.VoteBoothHandler)
+		r.Get("/cohorts", api.GetAllCohorts)
+		r.Get("/thanks", api.ThanksHandler)
+
+	} else {
+		r.Get("/", api.ShowBallotQueryPage)
+
+	}
 
 	// if !api.Election.Verification {
-	r.Get("/votingbooth", api.VoteBoothHandler)
-	r.Get("/cohorts", api.GetAllCohorts)
-	r.Get("/thanks", api.ThanksHandler)
 
 	r.Route("/candidates", func(r chi.Router) {
 		r.Get("/", api.GetAllCandidates)

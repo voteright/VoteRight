@@ -24,3 +24,130 @@ If a verification server has an error, or a dissagreement, that server's votes a
 In the event that less than two verification servers remain online, the election is invalidated.
 
 [Systems diagram](verificationdiagram.pdf)
+
+## API and Routes
+
+**Primary voting server**
+
+`GET /` - Serves main voting booth page
+
+`GET /voters` - Get all voters in the election (admin only)
+
+`POST /voters/validate` - Check is a voter is valid and has not voted. Post body should contain voter id. Returns the json blob representing the voter if valid, null if not
+
+**Request**
+
+```json
+{"ID": 1}
+```
+
+**Response**
+
+```json
+{
+ "StudentID": 1,
+ "Cohort": 1,
+ "Name": "Joey Lyon"
+}
+```
+
+`POST /voters/verifyself` - Uses the id stored in the session cookie to verify the voter
+
+**Response**
+```json
+{"Voted": true}
+```
+
+`POST /voters/vote` - Uses the id stored in the session cookie, and json body to cast the user's vote. Body should be a json array containing the ids of the candidates to vote for. Response contains random ids
+
+**Request**
+
+```json
+[{"ID":2},{"ID":3}]
+```
+
+**Response**
+
+```json
+{
+ "RandomID": 557700679194777,
+ "Candidates": [
+  {
+   "Name": "Stan Marsh",
+   "Cohort": 1,
+   "ID": 2
+  },
+  {
+   "Name": "Randy Marsh",
+   "Cohort": 1,
+   "ID": 3
+  }
+ ]
+}
+```
+
+`GET /candidates` - Get all candidates in the election
+
+```json
+[
+ {
+  "Name": "Eric Cartman",
+  "Cohort": 1,
+  "ID": 1
+ },
+ {
+  "Name": "Stan Marsh",
+  "Cohort": 1,
+  "ID": 2
+ },
+ {
+  "Name": "Randy Marsh",
+  "Cohort": 1,
+  "ID": 3
+ },
+ {
+  "Name": "Kenny",
+  "Cohort": 1,
+  "ID": 4
+ }
+]
+```
+
+`GET /candidates/votes` - Get all candidates and vote totals (admin only)
+
+```json
+[
+ {
+  "Candidate": {
+   "Name": "Eric Cartman",
+   "Cohort": 1,
+   "ID": 1
+  },
+  "Votes": 3
+ },
+ {
+  "Candidate": {
+   "Name": "Stan Marsh",
+   "Cohort": 1,
+   "ID": 2
+  },
+  "Votes": 1
+ },
+ {
+  "Candidate": {
+   "Name": "Randy Marsh",
+   "Cohort": 1,
+   "ID": 3
+  },
+  "Votes": 1
+ },
+ {
+  "Candidate": {
+   "Name": "Kenny",
+   "Cohort": 1,
+   "ID": 4
+  },
+  "Votes": 3
+ }
+]
+```
