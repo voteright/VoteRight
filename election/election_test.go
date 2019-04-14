@@ -229,5 +229,56 @@ func TestElection_GetCandidateVoteCounts(t *testing.T) {
 }
 
 func TestElection_CheckVerificationCountsMatch(t *testing.T) {
+	v := []models.CandidateVotes{
+		{
+			Candidate: models.Candidate{
+				Name: "Test Candidate",
+				ID:   1,
+			},
+			Votes: 1,
+		},
+		{
+			Candidate: models.Candidate{
+				Name: "Second Candidate",
+				ID:   2,
+			},
+			Votes: 2,
+		},
+	}
+	v2 := []models.CandidateVotes{
+		{
+			Candidate: models.Candidate{
+				Name: "Test Candidate",
+				ID:   1,
+			},
+			Votes: 1,
+		},
+		{
+			Candidate: models.Candidate{
+				Name: "Second Candidate",
+				ID:   2,
+			},
+			Votes: 2,
+		},
+	}
+	e := Election{}
+	par := [][]models.CandidateVotes{v, v2}
 
+	ret := e.CheckVerificationCountsMatch(par)
+	if !ret {
+		t.Errorf("Vote totals do not match but they should")
+	}
+	par2 := [][]models.CandidateVotes{v, []models.CandidateVotes{}}
+
+	ret = e.CheckVerificationCountsMatch(par2)
+	if ret {
+		t.Errorf("Vote totals match but they shouldnt")
+	}
+	v2[0].Votes = 5
+	par = [][]models.CandidateVotes{v, v2}
+
+	ret = e.CheckVerificationCountsMatch(par)
+	if ret {
+		t.Errorf("Vote totals do not match but they should")
+	}
 }
