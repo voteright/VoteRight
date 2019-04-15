@@ -1,0 +1,17 @@
+FROM golang:latest
+
+WORKDIR /go/src/github.com/voteright/voteright
+
+COPY . .
+
+RUN go get
+
+RUN go build .
+
+RUN go run main.go importdb dump.json
+
+RUN mv voteright.db verify.db
+
+RUN mv verify.json voteright.json
+
+CMD ["sh", "-c" , "voteright verify --port=${VERIFY_PORT}"]

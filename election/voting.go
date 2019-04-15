@@ -6,15 +6,33 @@ import (
 	"github.com/voteright/voteright/models"
 )
 
-// CastVote handles casting the vote and sending it to verification servers
-func (e *Election) CastVote(voter *models.Voter, vote *models.Vote) error {
+type idpost struct {
+	ID int
+}
+
+/*
+	Voting Specific functions for running an election
+*/
+
+func (e *Election) castVote(voter *models.Voter, vote *models.Vote) error {
 	fmt.Println(voter, vote)
 	err := e.db.StoreVote(*vote)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-	err = e.db.SetVoted(*voter)
 
-	return err
+	return nil
+}
+
+// CastVotes handles casting the votes
+func (e *Election) CastVotes(voter *models.Voter, votes []models.Vote) error {
+	for _, v := range votes {
+		err := e.castVote(voter, &v)
+		if err != nil {
+			return err
+		}
+	}
+	return e.db.SetVoted(*voter)
+
 }

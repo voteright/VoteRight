@@ -25,7 +25,7 @@ import (
 	"github.com/voteright/voteright/database"
 )
 
-// importdbCmd represents the importdb command
+// importdbCmd represents the importdb command which allows the user to import a command from a json blob
 var importdbCmd = &cobra.Command{
 	Use: "importdb [filename]",
 
@@ -44,10 +44,17 @@ var importdbCmd = &cobra.Command{
 			fmt.Println("Failed to unmarshal configuration!")
 			return
 		}
-		d, err := database.New(&cfg)
+		// d, err := database.New(&cfg)
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// 	return
+		// }
+		d := database.StormDB{
+			File: cfg.DatabaseFile,
+		}
+		err = d.Connect()
 		if err != nil {
-			fmt.Println(err.Error())
-			return
+			fmt.Println("err", err.Error())
 		}
 		_ = d
 		dump := database.Dump{}
@@ -77,7 +84,7 @@ var importdbCmd = &cobra.Command{
 			fmt.Println("Was the database empty? Continuing")
 
 		}
-
+		// fmt.Printf("storing %d voters", len(dump.Voters))
 		err = d.StoreVoters(dump.Voters)
 		if err != nil {
 			fmt.Println("Error importing voters:", err.Error())
@@ -93,6 +100,14 @@ var importdbCmd = &cobra.Command{
 
 			}
 
+		}
+		for _, race := range dump.Races {
+			err = d.StoreRace(race)
+			if err != nil {
+				fmt.Println("Error importing candidates:", err.Error())
+				fmt.Println("Was the database empty? Continuing")
+
+			}
 		}
 
 		fmt.Println("Done")

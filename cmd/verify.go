@@ -18,6 +18,11 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/voteright/voteright/api"
+	"github.com/voteright/voteright/config"
+	"github.com/voteright/voteright/database"
+	"github.com/voteright/voteright/election"
 )
 
 // verifyCmd represents the verify command
@@ -32,11 +37,37 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("verify called")
+		cfg := config.Config{}
+		err := viper.Unmarshal(&cfg)
+		fmt.Println("config", cfg.VerificationServers)
+		// d, err := database.New(&cfg)
+		// if err != nil {
+		// 	return
+		// }
+
+		if portOverride != "" {
+			cfg.ListenURL = "0.0.0.0:" + portOverride
+		}
+		d := database.StormDB{
+			File: "verify.db",
+		}
+		d.Connect()
+
+		if err != nil {
+			fmt.Println("Failed to unmarshal configuration!")
+			return
+		}
+
+		e := election.New(&d, true, []string{})
+
+		api := api.New(&cfg, e, &d)
+		api.Serve()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(verifyCmd)
+	verifyCmd.Flags().StringVarP(&portOverride, "port", "p", "8080", "override server port")
 
 	// Here you will define your flags and configuration settings.
 

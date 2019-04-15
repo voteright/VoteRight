@@ -21,13 +21,14 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/voteright/voteright/api"
 	"github.com/voteright/voteright/config"
 	"github.com/voteright/voteright/database"
 	"github.com/voteright/voteright/election"
-	"github.com/voteright/voteright/primaryapi"
 )
 
 var cfgFile string
+var portOverride string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -42,19 +43,28 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg := config.Config{}
 		err := viper.Unmarshal(&cfg)
+		fmt.Println("config", cfg.VerificationServers)
+		// d, err := database.New(&cfg)
+		// if err != nil {
+		// 	return
+		// }
 
-		d, err := database.New(&cfg)
-		if err != nil {
-			return
+		if portOverride != "" {
+			cfg.ListenURL = "0.0.0.0:" + portOverride
 		}
+		d := database.StormDB{
+			File: cfg.DatabaseFile,
+		}
+		d.Connect()
+
 		if err != nil {
 			fmt.Println("Failed to unmarshal configuration!")
 			return
 		}
 
-		e := election.New(d)
+		e := election.New(&d, false, cfg.VerificationServers)
 
-		api := primaryapi.New(&cfg, e, d)
+		api := api.New(&cfg, e, &d)
 		api.Serve()
 	},
 }
@@ -70,14 +80,9 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./voteright.json)")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./voteright.json)")
+	rootCmd.Flags().StringVarP(&portOverride, "port", "p", "8080", "override server port")
 }
 
 // initConfig reads in config file and ENV variables if set.
