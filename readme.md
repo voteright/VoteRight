@@ -2,6 +2,13 @@
 
 An electronic voting system with distributed trust
 
+## Installation
+
+1) Install Docker and Docker Compose
+2) Clone the repository
+3) cd into the directory `cd voteright/`
+4) run `docker-compose up`
+
 ## Voting
 
 *Primary Vote server* - Serves voting booth, ballot
