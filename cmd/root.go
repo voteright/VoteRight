@@ -80,13 +80,8 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./voteright.json)")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./voteright.json)")
 	rootCmd.Flags().StringVarP(&portOverride, "port", "p", "8080", "override server port")
 }
 

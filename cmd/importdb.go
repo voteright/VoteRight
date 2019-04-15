@@ -25,7 +25,7 @@ import (
 	"github.com/voteright/voteright/database"
 )
 
-// importdbCmd represents the importdb command
+// importdbCmd represents the importdb command which allows the user to import a command from a json blob
 var importdbCmd = &cobra.Command{
 	Use: "importdb [filename]",
 

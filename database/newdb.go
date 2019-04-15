@@ -7,10 +7,24 @@ import (
 	"github.com/voteright/voteright/models"
 )
 
+/*
+	This is the code for the database connection to stormdb, it allows storing
+	Models and handling errors in a standard way.
+*/
+
 // StormDB represents a connection to the stormdb
 type StormDB struct {
 	File string
 	DB   *storm.DB
+}
+
+// Dump represents a dump of the database, used by importer and exporter
+type Dump struct {
+	Voters     []models.Voter
+	Votes      []models.Vote
+	Candidates []models.Candidate
+	Cohorts    []models.Cohort
+	Races      []models.Race
 }
 
 // Connect connects to the database
@@ -139,7 +153,7 @@ func (s *StormDB) GetAllRaces() ([]models.Race, error) {
 	return races, err
 }
 
-// StorIntegrityViolation stores integrity violations in the database
+// StoreIntegrityViolation stores integrity violations in the database
 func (s *StormDB) StoreIntegrityViolation(IntegrityViolation models.IntegrityViolation) error {
 	return s.DB.Save(&IntegrityViolation)
 
@@ -152,10 +166,12 @@ func (s *StormDB) GetAllIntegrityViolations() ([]models.IntegrityViolation, erro
 	return races, err
 }
 
+// StoreBallot stores a ballot in the database
 func (s *StormDB) StoreBallot(Ballot models.Ballot) error {
 	return s.DB.Save(&Ballot)
 }
 
+// GetAllBallots gets all ballots in the database
 func (s *StormDB) GetAllBallots() ([]models.Ballot, error) {
 	var ballots []models.Ballot
 	err := s.DB.All(&ballots)
