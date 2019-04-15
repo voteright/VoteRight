@@ -200,8 +200,6 @@ func (e *Election) CheckVerificationCountsMatch(votes [][]models.CandidateVotes)
 			for itr := range j {
 				if i[itr] != j[itr] {
 					return false
-				} else {
-
 				}
 			}
 
