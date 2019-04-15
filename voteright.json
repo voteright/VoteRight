@@ -1,5 +1,9 @@
 {
     "ListenURL": "0.0.0.0:8080",
     "DatabaseFile": "voteright.db",
-    "Verification": false
+    "Verification": false,
+    "VerificationServers": [
+        "http://verificationone:8081",
+        "http://verificationtwo:8080"
+    ]
 }
