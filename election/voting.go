@@ -10,6 +10,10 @@ type idpost struct {
 	ID int
 }
 
+/*
+	Voting Specific functions for running an election
+*/
+
 func (e *Election) castVote(voter *models.Voter, vote *models.Vote) error {
 	fmt.Println(voter, vote)
 	err := e.db.StoreVote(*vote)

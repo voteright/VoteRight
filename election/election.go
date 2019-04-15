@@ -11,6 +11,11 @@ import (
 	"github.com/voteright/voteright/models"
 )
 
+/*
+	This file contains the main elections structures, types, and functions for running the election
+	Most business logic should be located in this package.
+*/
+
 // Election represents entities required to run an election, will eventually contain
 // the database interaction, and potentially remote servers
 type Election struct {
