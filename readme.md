@@ -4,10 +4,17 @@ An electronic voting system with distributed trust
 
 ## Installation
 
-1) Install Docker and Docker Compose
+1) Install Docker and Docker Compose https://docs.docker.com/compose/install/
 2) Clone the repository
 3) cd into the directory `cd voteright/`
 4) run `docker-compose up`
+
+## Dev installation
+
+1) Install golang 1.12 https://blog.golang.org/go1.12
+2) clone the repo into your gopath
+3) go get .
+4) go run main.go
 
 ## Voting
 
