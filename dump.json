@@ -389,7 +389,22 @@
             "StudentID": 83,
             "Cohort": 1,
             "Name": "Huanzhi Zhu"
-        }        
+        },
+        {
+            "StudentID": 84,
+            "Cohort": 1,
+            "Name": "John Sturman"
+        },
+        {
+            "StudentID": 85,
+            "Cohort": 1,
+            "Name": "John Angel"
+        },
+        {
+            "StudentID": 86,
+            "Cohort": 1,
+            "Name": "Elizabeth Kyei"
+        }
     ],
     "Votes": [],
     "Candidates": [
