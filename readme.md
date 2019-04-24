@@ -2,7 +2,7 @@
 
 An electronic voting system with distributed trust
 
-## Installation
+## Installation (primary and verification servers on one instance)
 
 1) Install Docker and Docker Compose https://docs.docker.com/compose/install/
 2) Clone the repository
@@ -15,6 +15,31 @@ An electronic voting system with distributed trust
 2) clone the repo into your gopath
 3) go get .
 4) go run main.go
+
+## Deploy primary vote server
+
+1) Install Docker and Docker Compose https://docs.docker.com/compose/install/
+2) Clone the repository
+3) cd into the directory `cd voteright/`
+4) Configure verification server locations, and port in voteright.json
+4) Configure the election in dump.json
+5) run `docker build . -t voteright`
+6) prepare the dump.json file to be used for the creation of verification servers
+7) docker run --net="host" -d voteright
+    - Note port flags and other docker flags can be used if necessary
+
+## Deploy verification server
+
+1) Install Docker and Docker Compose https://docs.docker.com/compose/install/
+2) Clone the repository
+3) cd into the directory `cd voteright/`
+4) Configure set the verification field to true in voteright.json
+4) copy the provided dump.json into the directory
+5) run `docker build . -t voteright verification -f Dockerfile.verification`
+6) docker run --net="host" -d voteright
+    - Note port flags and other docker flags can be used if necessary
+
+
 
 ## Voting
 
